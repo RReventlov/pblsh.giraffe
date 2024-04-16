@@ -4,3 +4,10 @@
 type Message = { Text: string }
 
 type RoutePart = { Text: string; Link: string }
+
+[<CLIMutable>]
+type UncheckedSignUpInfo = {
+    Email: string
+    Password: string
+    Username: string
+}

@@ -6,34 +6,36 @@ open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http.HttpResults
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
+open pblsh.Models
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
-
-let indexHandler () =
-    let view = Views.index ()
-    htmlView view
-
-let loginHandler () =
-    let view = Views.login ()
-    htmlView view
 
 let logoutHandler () =
     signOut authScheme >=> redirectTo false "/index"
 
+let parsingError (err: string) = RequestErrors.BAD_REQUEST err
+
 let webApp =
     choose
-        [ route "/index" >=> indexHandler ()
+        [ route "/index" >=> Handlers.getIndex ()
           subRouteCi
               "/account"
               (choose
-                  [ routeCi "/login" >=> loginHandler ()
-                    requiresAuthentication (challenge authScheme)
-                    >=> choose [ routeCi "/logout" >=> text "Logout is coming soon" ] ])
+                  [ GET
+                    >=> choose
+                            [ routeCi "/login" >=> Handlers.getLogin ()
+                              routeCi "/signup" >=> Handlers.getSignup ()
+                              requiresAuthentication (challenge authScheme)
+                              >=> choose [ routeCi "/logout" >=> text "Logout is coming soon" ] ]
+                    POST
+                    >=> choose
+                            [ routeCi "/login" >=> Handlers.postLogin ()
+                              routeCi "/signup"
+                              >=> tryBindForm<UncheckedSignUpInfo> parsingError None Successful.OK ] ])
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
 let errorHandler (ex: Exception) (logger: ILogger) =
@@ -60,9 +62,12 @@ let configureApp (app: IApplicationBuilder) =
 let configureServices (services: IServiceCollection) =
     services.AddCors() |> ignore
     services.AddGiraffe() |> ignore
+
     services.AddRouting(fun o ->
         o.LowercaseUrls <- true
-        o.LowercaseQueryStrings <- true) |> ignore
+        o.LowercaseQueryStrings <- true)
+    |> ignore
+
     services.AddAuthentication().AddCookie(authScheme) |> ignore
 
 let configureLogging (builder: ILoggingBuilder) =
