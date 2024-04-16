@@ -47,6 +47,10 @@ main {
     transition: background .125s;
 }
 
+.action-link {
+    color: var(--action-color);
+}
+
 .filled-action {
     border: 1px solid var(--action-color);
     border-radius: .5rem;
