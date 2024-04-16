@@ -1,0 +1,28 @@
+Subject: [PATCH] add shadow and background to login page
+---
+Index: pblsh.giraffe/WebRoot/login.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pblsh.giraffe/WebRoot/login.css b/pblsh.giraffe/WebRoot/login.css
+--- a/pblsh.giraffe/WebRoot/login.css	(revision 1f3673c237df957549410e2bd0c245b5003cebf6)
++++ b/pblsh.giraffe/WebRoot/login.css	(date 1713289706312)
+@@ -3,7 +3,7 @@
+     display: grid;
+     align-items: center;
+     justify-content: center;
+-    /*background: hsl(0, 0%, 95%);*/
++    background: hsl(0, 0%, 95%);
+ }
+ 
+ #form-holder {
+@@ -11,7 +11,7 @@
+     border-radius: .5rem;
+     padding: 2rem 2.5rem;
+     background: white;
+-    /*box-shadow: 0 0 10px hsl(0, 0%, 96%);*/
++    box-shadow: 0 0 10px hsl(0, 0%, 96%);
+ }
+ 
+ h1 {
