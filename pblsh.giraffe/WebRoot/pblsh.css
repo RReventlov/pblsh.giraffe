@@ -1,0 +1,63 @@
+﻿body {
+    font-family: Inter, sans-serif;
+    color: #333;
+    font-size: .9em;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    --main-color: hsl(259, 79%, 20%);
+    --action-color: hsl(259, 79%, 60%);
+    --action-color-hover: hsl(259, 79%, 65%);
+    --border-color: hsl(0, 0%, 85%);
+}
+
+h1 {
+    font-weight: 100;
+}
+
+header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: .5rem;
+    height: 36px;
+    align-items: center;
+}
+
+#logo {
+    align-content: center;
+    grid-column: 1;
+    font-weight: bold;
+    font-size: 24px;
+    color: var(--main-color);
+}
+
+main {
+    padding: .5rem;
+}
+
+
+.action {
+    border: 1px solid var(--action-color);
+    border-radius: .5rem;
+    padding: .5rem;
+    transition: background .125s;
+}
+
+.action:hover {
+    background: hsl(0, 0%, 95%);
+    transition: background .125s;
+}
+
+.filled-action {
+    border: 1px solid var(--action-color);
+    border-radius: .5rem;
+    padding: .5rem;
+    background: var(--action-color);
+    color: white;
+    transition: background .125s, border .125s;
+}
+
+.filled-action:hover {
+    background: var(--action-color-hover);
+    border: 1px solid var(--action-color-hover);
+    transition: background .125s, border .125s;
+}
