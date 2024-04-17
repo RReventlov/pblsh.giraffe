@@ -4,6 +4,7 @@ open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Components
 
+
 let randomPostCard _ =
     div
         [ _class "postcard" ]
@@ -24,7 +25,7 @@ let index () =
     [ partial ()
       navigation [ { Text = "Home"; Link = "/index" } ]
       main [] [ div [] [ yield! elements |> List.map randomPostCard ] ] ]
-    |> titledLayout "pblsh" [ "index.css" ]
+    |> titledLayoutCss "pblsh" [ "index.css" ]
 
 let login () =
     [ emptyPartial ()
@@ -42,17 +43,18 @@ let login () =
                         input [ _type "submit"; _value "Log in"; _class "filled-action" ] ]
                   div
                       []
-                      [ span [] [ encodedText "Don't have an account? " ]
-                        a [ _class "action-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ] ] ]
-    |> titledLayout "pblsh.login" [ "login.css" ]
+                      [ span [] [encodedText "Don't have an account? "]
+                        a [_class "action-link"; _href "/account/signup"] [encodedText "Sign up"] ] ] ] ]
+    |> titledLayoutCss "pblsh.login" [ "login.css" ]
 
 let signup () =
     [ emptyPartial ()
       main
-          []
+          [ _class "shiny" ]
           [ div
                 [ _id "center" ]
-                [ form
+                [
+                  form
                       [ _action "signup"; _method "post" ]
                       [ h1 [] [ encodedText "Sign up" ]
                         label [ _for "email" ] [ encodedText "E-Mail" ]
@@ -66,7 +68,7 @@ let signup () =
                       []
                       [ span [] [ encodedText "Already signed up? " ]
                         a [ _class "action-link"; _href "/account/login" ] [ encodedText "Log in" ] ] ] ] ]
-    |> titledLayout "pblsh.signup" [ "login.css" ]
+    |> titledLayoutCJ"pblsh.signup" [ "login.css" ] [ "mousetracker.js" ]
 
 let errorWithRedirect (link: string) =
     [ emptyPartial ()

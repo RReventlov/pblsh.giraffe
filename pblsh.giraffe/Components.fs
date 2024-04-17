@@ -3,9 +3,8 @@
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Models
-
-
-let titledLayout (pageTitle: string) (cssFiles: string list) (content: XmlNode list) =
+        
+let titledLayoutCJ (pageTitle: string) (cssFiles: string list) (jsFiles: string list) (content: XmlNode list) =
     html
         []
         [ head
@@ -15,10 +14,24 @@ let titledLayout (pageTitle: string) (cssFiles: string list) (content: XmlNode l
                 link [ _rel "stylesheet"; _type "text/css"; _href "/pblsh.css" ]
                 yield!
                     cssFiles
-                    |> List.map (fun f -> link [ _rel "stylesheet"; _type "text/css"; _href (sprintf "/%s" f) ]) ]
-          body [] content ]
+                    |> List.map (fun f -> link [ _rel "stylesheet"; _type "text/css"; _href (sprintf "/%s" f) ])
+              ]
+          body [] content
+          yield!
+            jsFiles
+            |> List.map (fun f -> script [ _type "text/javascript"; _src (sprintf "/%s" f) ] [])
+        ]         
+        
+let titledLayout (pageTitle: string) =
+    titledLayoutCJ pageTitle [] []
 
-let layout (content: XmlNode list) = titledLayout "pblsh" [] content
+let titledLayoutCss (pageTitle: string) (cssFiles: string list) =
+    titledLayoutCJ pageTitle cssFiles []
+        
+let titledLayoutJs (pageTitle: string) (jsFiles: string list) =
+    titledLayoutCJ pageTitle [] jsFiles
+
+let layout (content: XmlNode list) = titledLayout "pblsh" content
 
 let partial () =
     header
