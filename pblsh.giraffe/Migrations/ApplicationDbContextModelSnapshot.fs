@@ -9,7 +9,7 @@ open Microsoft.EntityFrameworkCore.Migrations
 open Microsoft.EntityFrameworkCore.Storage.ValueConversion
 open pblsh.giraffe
 
-[<DbContext(typeof<ApplicationDbContext.ApplicationDbContext>)>]
+[<DbContext(typeof<Identity.ApplicationDbContext>)>]
 type ApplicationDbContextModelSnapshot() =
     inherit ModelSnapshot()
 
