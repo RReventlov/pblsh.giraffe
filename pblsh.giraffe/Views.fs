@@ -43,8 +43,8 @@ let login () =
                         input [ _type "submit"; _value "Log in"; _class "filled-action" ] ]
                   div
                       []
-                      [ span [] [encodedText "Don't have an account? "]
-                        a [_class "action-link"; _href "/account/signup"] [encodedText "Sign up"] ] ] ] ]
+                      [ span [] [ encodedText "Don't have an account? " ]
+                        a [ _class "action-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ] ] ]
     |> titledLayoutCss "pblsh.login" [ "login.css" ]
 
 let signup () =
@@ -53,8 +53,7 @@ let signup () =
           [ _class "shiny" ]
           [ div
                 [ _id "center" ]
-                [
-                  form
+                [ form
                       [ _action "signup"; _method "post" ]
                       [ h1 [] [ encodedText "Sign up" ]
                         label [ _for "email" ] [ encodedText "E-Mail" ]
@@ -68,12 +67,12 @@ let signup () =
                       []
                       [ span [] [ encodedText "Already signed up? " ]
                         a [ _class "action-link"; _href "/account/login" ] [ encodedText "Log in" ] ] ] ] ]
-    |> titledLayoutCJ"pblsh.signup" [ "login.css" ] [ "mousetracker.js" ]
+    |> titledLayoutCJ "pblsh.signup" [ "login.css" ] [ "mousetracker.js" ]
 
 let errorWithRedirect (link: string) =
     [ emptyPartial ()
       main [] [ div [ _id "center" ] [ h1 [] [ encodedText "Something happened" ] ] ] ]
-    |> titledLayout "pblsh.error" [ "error.css" ]
+    |> titledLayoutCss "pblsh.error" [ "error.css" ]
 
 let confirmEmail () =
     [ emptyPartial ()
@@ -83,4 +82,4 @@ let confirmEmail () =
                 [ _id "center" ]
                 [ h1 [] [ encodedText "Thanks for signing up!" ]
                   div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ] ] ]
-    |> titledLayout "pblsh.confirm" [ "confirm.css" ]
+    |> titledLayoutCss "pblsh.confirm" [ "confirm.css" ]
