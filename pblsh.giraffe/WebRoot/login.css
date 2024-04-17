@@ -1,12 +1,15 @@
-﻿main {
+﻿
+
+main {
     grid-row: 3;
     display: grid;
     align-items: center;
     justify-content: center;
-    background: hsl(0, 0%, 95%);
+    /*background: hsl(0, 0%, 95%);*/
 }
 
 #center {
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -49,4 +52,22 @@ input[type="submit"] {
 
 #already-signed-in-link {
     color: var(--action-color);
+}
+
+.shiny {
+    --x:0;
+    --y:0;
+    position: relative;
+    overflow: hidden;
+    background: hsl(0, 0%, 95%);
+}
+
+.shiny::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--y, 0) * 1px - 2000px);
+    left: calc(var(--x, 0) * 1px - 2000px);
+    width: 4000px;
+    height: 4000px;
+    background: radial-gradient(lavender, #3984ff00 40%);
 }
