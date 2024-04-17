@@ -35,7 +35,7 @@ let webApp =
                     >=> choose
                             [ routeCi "/login" >=> Handlers.postLogin ()
                               routeCi "/signup"
-                              >=> tryBindForm<UncheckedSignUpInfo> parsingError None Successful.OK ] ])
+                              >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ] ])
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
 let errorHandler (ex: Exception) (logger: ILogger) =
