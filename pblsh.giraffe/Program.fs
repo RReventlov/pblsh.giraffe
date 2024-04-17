@@ -65,22 +65,27 @@ let configureApp (app: IApplicationBuilder) =
 let configureServices (services: IServiceCollection) =
     services.AddCors() |> ignore
     services.AddGiraffe() |> ignore
-
-    services.AddRouting(fun o ->
-        o.LowercaseUrls <- true
-        o.LowercaseQueryStrings <- true)
-    |> ignore
-
-    services.AddDbContext<ApplicationDbContext>(fun o ->
-        o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh.identity;trusted_connection=true")
-        |> ignore)
-    |> ignore
-
     services.AddAuthentication().AddCookie(authScheme) |> ignore
 
     services
+        .AddDistributedMemoryCache()
+        .AddRouting(fun o ->
+            o.LowercaseUrls <- true
+            o.LowercaseQueryStrings <- true)
+    |> ignore
+
+    services
+        .AddDbContext<ApplicationDbContext>(fun o ->
+            o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh.identity;trusted_connection=true")
+            |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
+    |> ignore
+
+
+    services.AddSession(fun o ->
+        o.Cookie.HttpOnly <- true
+        o.Cookie.IsEssential <- true)
     |> ignore
 
 let configureLogging (builder: ILoggingBuilder) =

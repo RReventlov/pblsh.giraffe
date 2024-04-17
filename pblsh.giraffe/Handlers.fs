@@ -1,8 +1,15 @@
 ﻿module pblsh.Handlers
 
+open System.Text.Json
 open Giraffe
 open Microsoft.AspNetCore.Identity
 open pblsh.Models
+//
+// module Session =
+//     
+//     let storeValue key value session =
+//         let text = JsonSerializer.Serialize value
+//         
 
 let getIndex () =
     let view = Views.index ()

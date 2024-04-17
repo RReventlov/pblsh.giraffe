@@ -1,6 +1,5 @@
 ﻿module pblsh.Components
 
-open System.Xml
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Models
@@ -15,11 +14,11 @@ let titledLayoutCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle:
                 link [ _rel "stylesheet"; _type "text/css"; _href "/css/pblsh.css" ]
                 yield!
                     cssFiles
-                    |> List.map (fun f -> link [ _rel "stylesheet"; _type "text/css"; _href (sprintf "/css/%s" f) ])
-                yield!
-                    jsFiles
-                    |> List.map (fun f -> script [ _type "text/javascript"; _src (sprintf "/js/%s" f) ] []) ]
-          body [] content ]
+                    |> List.map (fun f -> link [ _rel "stylesheet"; _type "text/css"; _href (sprintf "/css/%s" f) ]) ]
+          body [] content
+          yield!
+              jsFiles
+              |> List.map (fun f -> script [ _type "text/javascript"; _src (sprintf "/js/%s" f) ] []) ]
 
 let titledLayout = titledLayoutCssJs [] []
 
