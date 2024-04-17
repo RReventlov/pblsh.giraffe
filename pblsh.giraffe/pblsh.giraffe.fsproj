@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="ApplicationDbContext.fs" />
+        <Compile Include="Identity.fs" />
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
         <Compile Include="Components.fs" />
@@ -41,6 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
+      <Content Include="appsettings.json" />
+      <Content Include="appsettings.dev.json" />
     </ItemGroup>
 </Project>

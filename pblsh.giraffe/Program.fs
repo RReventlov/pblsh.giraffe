@@ -6,11 +6,14 @@ open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Identity
+open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
 open pblsh.Models
+open pblsh.giraffe.Identity
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
@@ -68,7 +71,17 @@ let configureServices (services: IServiceCollection) =
         o.LowercaseQueryStrings <- true)
     |> ignore
 
+    services.AddDbContext<ApplicationDbContext>(fun o ->
+        o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh.identity;trusted_connection=true")
+        |> ignore)
+    |> ignore
+
     services.AddAuthentication().AddCookie(authScheme) |> ignore
+
+    services
+        .AddDefaultIdentity<IdentityUser>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+    |> ignore
 
 let configureLogging (builder: ILoggingBuilder) =
     builder.AddConsole().AddDebug() |> ignore
