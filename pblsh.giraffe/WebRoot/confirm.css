@@ -1,0 +1,7 @@
+main {
+    grid-row: 3;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    background: hsl(0, 0%, 95%);
+}

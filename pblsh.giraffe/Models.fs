@@ -9,5 +9,5 @@ type RoutePart = { Text: string; Link: string }
 type UncheckedSignUpInfo = {
     Email: string
     Password: string
-    Username: string
+    UserName: string
 }

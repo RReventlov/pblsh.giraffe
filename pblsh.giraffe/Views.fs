@@ -4,7 +4,6 @@ open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Components
 
-
 let randomPostCard _ =
     div
         [ _class "postcard" ]
@@ -33,8 +32,7 @@ let login () =
           []
           [ div
                 [ _id "center" ]
-                [ 
-                  form
+                [ form
                       [ _action "login"; _method "post" ]
                       [ h1 [] [ encodedText "Log in" ]
                         label [ _for "email" ] [ encodedText "E-Mail" ]
@@ -47,6 +45,7 @@ let login () =
                       [ span [] [encodedText "Don't have an account? "]
                         a [_class "action-link"; _href "/account/signup"] [encodedText "Sign up"] ] ] ] ]
     |> titledLayoutCss "pblsh.login" [ "login.css" ]
+
 
 let signup () =
     [ emptyPartial ()
@@ -70,3 +69,19 @@ let signup () =
                       [ span [] [ encodedText "Already signed up? " ]
                         a [ _class "action-link"; _href "/account/login" ] [ encodedText "Log in" ] ] ] ] ]
     |> titledLayoutCJ"pblsh.signup" [ "login.css" ] [ "mousetracker.js" ]
+
+
+let errorWithRedirect (link: string) =
+    [ emptyPartial ()
+      main [] [ div [ _id "center" ] [ h1 [] [ encodedText "Something happened" ] ] ] ]
+    |> titledLayout "pblsh.error" [ "error.css" ]
+
+let confirmEmail () =
+    [ emptyPartial ()
+      main
+          []
+          [ div
+                [ _id "center" ]
+                [ h1 [] [ encodedText "Thanks for signing up!" ]
+                  div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ] ] ]
+    |> titledLayout "pblsh.confirm" [ "confirm.css" ]

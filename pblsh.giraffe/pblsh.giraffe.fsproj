@@ -7,11 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
         <PackageReference Include="Giraffe" Version="6.0.0"/>
         <PackageReference Include="Giraffe.ViewEngine" Version="1.3.*"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.29" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.29" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.29">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.29" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.29">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="Identity.fs" />
+        <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
         <Compile Include="Components.fs" />
         <Compile Include="Views.fs" />
@@ -24,5 +38,10 @@
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.json" />
+      <Content Include="appsettings.dev.json" />
     </ItemGroup>
 </Project>
