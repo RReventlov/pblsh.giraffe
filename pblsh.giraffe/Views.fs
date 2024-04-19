@@ -28,10 +28,10 @@ let index () =
       main [] [ div [] (elements |> List.map randomPostCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
 
-let login (redirectAfterLogin: RedirectAfterLogin option) =
+let login (redirectAfterLogin: RedirectInfo option) =
     let actionUrl =
         match redirectAfterLogin with
-        | Some r -> sprintf "login&returnurl=%s" r.ReturnUrl
+        | Some r -> sprintf "login?ReturnUrl=%s" r.ReturnUrl
         | None -> "login"
     [ form
           [ _action actionUrl; _method "post"; _class "main-content" ]

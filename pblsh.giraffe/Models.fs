@@ -22,6 +22,6 @@ module Forms =
 module QueryStrings =
     
     [<CLIMutable>]
-    type RedirectAfterLogin = {
+    type RedirectInfo = {
         ReturnUrl: string
     }

@@ -13,7 +13,7 @@ let getIndex () =
 let getLogin () : HttpHandler =
     fun next ctx ->
         let redirectAfterLogin =
-            ctx.TryBindQueryString<RedirectAfterLogin>() |> Result.toOption
+            ctx.TryBindQueryString<RedirectInfo>() |> Result.toOption
 
         let view = Views.login redirectAfterLogin
         htmlView view next ctx
@@ -26,9 +26,9 @@ let postLogin (loginInfo: Forms.LoginInfo) : HttpHandler =
             
             if login.Succeeded then
                 return!
-                    match ctx.TryBindQueryString<RedirectAfterLogin>() with
-                    | Ok r -> text (sprintf "redirect to %s" r.ReturnUrl) next ctx
-                    | Error _ -> redirectTo true "/admin/me" next ctx
+                    match ctx.TryBindQueryString<RedirectInfo>() with
+                    | Ok r -> redirectTo true r.ReturnUrl next ctx
+                    | Error e -> redirectTo true "/account/me" next ctx
             else
                 return! text (ctx.GetRequestUrl()) next ctx
         }

@@ -26,7 +26,7 @@ let parsingError (err: string) = RequestErrors.BAD_REQUEST err
 let webApp =
     choose
         [ route "/index" >=> Handlers.getIndex ()
-          routeCi "/account/login"
+          routeCix "/account/login(.*)"
           >=> choose
                   [ GET >=> Handlers.getLogin ()
                     POST >=> tryBindForm<LoginInfo> parsingError None Handlers.postLogin ]
