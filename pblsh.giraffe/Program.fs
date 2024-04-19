@@ -12,8 +12,8 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open pblsh.Models
 open pblsh.Models.Forms
+open pblsh.Models.QueryStrings
 open pblsh.giraffe.Identity
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
@@ -26,17 +26,21 @@ let parsingError (err: string) = RequestErrors.BAD_REQUEST err
 let webApp =
     choose
         [ route "/index" >=> Handlers.getIndex ()
-          routeCi "/account/login" >=> choose [
-              GET >=> Handlers.getLogin ()
-              POST >=> tryBindForm<LoginInfo> parsingError None Handlers.postLogin
-          ]
-          routeCi "/account/signup" >=> choose [
-              GET >=> Handlers.getSignup ()
-              POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup
-          ]
+          routeCi "/account/login"
+          >=> choose
+                  [ GET >=> Handlers.getLogin ()
+                    POST >=> tryBindForm<LoginInfo> parsingError None Handlers.postLogin ]
+          routeCi "/account/signup"
+          >=> choose
+                  [ GET >=> Handlers.getSignup ()
+                    POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ]
           requiresAuthentication (challenge authScheme)
           >=> choose
-                  [ subRoute "/account" (choose [ routeCi "/logout" >=> text "logout is coming soon" ])
+                  [ subRoute
+                        "/account"
+                        (choose
+                            [ routeCi "/logout" >=> text "logout is coming soon"
+                              routeCi "/me" >=> text "this is your account" ])
                     route "/am-i-authenticated" >=> text "you are authenticated" ]
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
@@ -53,6 +57,8 @@ let configureCors (builder: CorsPolicyBuilder) =
 
 let configureApp (app: IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
+
+    app.UseAuthentication() |> ignore
 
     (match env.IsDevelopment() with
      | true -> app.UseDeveloperExceptionPage()

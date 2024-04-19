@@ -1,31 +1,36 @@
 ﻿module pblsh.Handlers
 
-open System.Text.Json
 open Giraffe
 open Microsoft.AspNetCore.Identity
 open pblsh.Models
+open pblsh.Models.Forms
+open pblsh.Models.QueryStrings
 
 let getIndex () =
     let view = Views.index ()
     htmlView view
 
-let getLogin () =
-    let view = Views.login ()
-    htmlView view
+let getLogin () : HttpHandler =
+    fun next ctx ->
+        let redirectAfterLogin =
+            ctx.TryBindQueryString<RedirectAfterLogin>() |> Result.toOption
+
+        let view = Views.login redirectAfterLogin
+        htmlView view next ctx
 
 let postLogin (loginInfo: Forms.LoginInfo) : HttpHandler =
     fun next ctx ->
         task {
             let loginManager = ctx.GetService<SignInManager<IdentityUser>>()
             let! login = loginManager.PasswordSignInAsync(loginInfo.UserName, loginInfo.Password, false, false)
-
-            return!
-                (if login.Succeeded then
-                     text "Login succeeded"
-                 else
-                     text "Login failed")
-                    next
-                    ctx
+            
+            if login.Succeeded then
+                return!
+                    match ctx.TryBindQueryString<RedirectAfterLogin>() with
+                    | Ok r -> text (sprintf "redirect to %s" r.ReturnUrl) next ctx
+                    | Error _ -> redirectTo true "/admin/me" next ctx
+            else
+                return! text (ctx.GetRequestUrl()) next ctx
         }
 
 let getSignup () =

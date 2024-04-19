@@ -3,6 +3,7 @@
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Components
+open pblsh.Models.QueryStrings
 
 
 let randomPostCard _ =
@@ -27,9 +28,13 @@ let index () =
       main [] [ div [] (elements |> List.map randomPostCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
 
-let login () =
+let login (redirectAfterLogin: RedirectAfterLogin option) =
+    let actionUrl =
+        match redirectAfterLogin with
+        | Some r -> sprintf "login&returnurl=%s" r.ReturnUrl
+        | None -> "login"
     [ form
-          [ _action "login"; _method "post"; _class "main-content" ]
+          [ _action actionUrl; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Log in" ]
             label [ _for "username" ] [ encodedText "Username" ]
             input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]

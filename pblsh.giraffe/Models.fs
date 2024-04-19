@@ -18,3 +18,10 @@ module Forms =
         UserName: string
         Password: string
     }
+    
+module QueryStrings =
+    
+    [<CLIMutable>]
+    type RedirectAfterLogin = {
+        ReturnUrl: string
+    }
