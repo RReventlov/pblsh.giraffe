@@ -24,7 +24,7 @@ let index () =
 
     [ filledTopRow ()
       navigation [ { Text = "Home"; Link = "/index" } ]
-      main [] [ div [] [ yield! elements |> List.map randomPostCard ] ] ]
+      main [] [ div [] (elements |> List.map randomPostCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
 
 let login () =
