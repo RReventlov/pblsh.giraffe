@@ -4,12 +4,6 @@ open System.Text.Json
 open Giraffe
 open Microsoft.AspNetCore.Identity
 open pblsh.Models
-//
-// module Session =
-//     
-//     let storeValue key value session =
-//         let text = JsonSerializer.Serialize value
-//         
 
 let getIndex () =
     let view = Views.index ()
@@ -19,20 +13,40 @@ let getLogin () =
     let view = Views.login ()
     htmlView view
 
-let postLogin () = text "postHandler"
+let postLogin (loginInfo: Forms.LoginInfo) : HttpHandler =
+    fun next ctx ->
+        task {
+            let loginManager = ctx.GetService<SignInManager<IdentityUser>>()
+            let! login = loginManager.PasswordSignInAsync(loginInfo.UserName, loginInfo.Password, false, false)
+
+            return!
+                (if login.Succeeded then
+                     text "Login succeeded"
+                 else
+                     text "Login failed")
+                    next
+                    ctx
+        }
 
 let getSignup () =
     let view = Views.signup ()
     htmlView view
-    
-let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler = 
-    fun nxt ctx ->
+
+let postSignup (uncheckedSignUpInfo: Forms.UncheckedSignUpInfo) : HttpHandler =
+    fun next ctx ->
         task {
             let userManager = ctx.GetService<UserManager<IdentityUser>>()
-            let user = IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
+
+            let user =
+                IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
+
             let! result = userManager.CreateAsync(user, uncheckedSignUpInfo.Password)
-            
-            let view = if result.Succeeded then Views.confirmEmail () else (Views.errorWithRedirect "account/signup")
-            
-            return! (htmlView view) nxt ctx
+
+            let view =
+                if result.Succeeded then
+                    Views.signUpComplete ()
+                else
+                    (Views.errorWithRedirect "account/signup")
+
+            return! (htmlView view) next ctx
         }

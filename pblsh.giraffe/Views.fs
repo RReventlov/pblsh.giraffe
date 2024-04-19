@@ -29,10 +29,10 @@ let index () =
 
 let login () =
     [ form
-          [ _action "login"; _method "post" ]
+          [ _action "login"; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Log in" ]
-            label [ _for "email" ] [ encodedText "E-Mail" ]
-            input [ _id "email"; _type "text"; _name "email"; _placeholder "E-Mail" ]
+            label [ _for "username" ] [ encodedText "Username" ]
+            input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]
             label [ _for "password" ] [ encodedText "Password" ]
             input [ _id "password"; _type "password"; _name "password"; _placeholder "Password" ]
             input [ _type "submit"; _value "Log in"; _class "filled-action" ] ]
@@ -40,11 +40,11 @@ let login () =
           []
           [ span [] [ encodedText "Don't have an account? " ]
             a [ _class "action-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
-    |> dialog "pblsh.login"
+    |> dialogCss [ "login.css" ] "pblsh.login"
 
 let signup () =
     [ form
-          [ _action "signup"; _method "post" ]
+          [ _action "signup"; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Sign up" ]
             label [ _for "email" ] [ encodedText "E-Mail" ]
             input [ _id "email"; _type "text"; _name "email"; _placeholder "E-Mail" ]
@@ -67,7 +67,9 @@ let errorWithRedirect (link: string) =
             div [ _id "bottom-text" ] [ encodedText "An error occurred. Please try again another time." ] ] ]
     |> dialogCss [ "error.css" ] "pblsh.error"
 
-let confirmEmail () =
-    [ h1 [] [ encodedText "Thanks for signing up!" ]
-      div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ]
+let signUpComplete () =
+    [ div
+          [ _class "main-content" ]
+          [ h1 [] [ encodedText "Thanks for signing up!" ]
+            div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ] ]
     |> dialog "pblsh.confirm"

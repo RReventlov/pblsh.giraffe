@@ -13,6 +13,7 @@ open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
 open pblsh.Models
+open pblsh.Models.Forms
 open pblsh.giraffe.Identity
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
@@ -25,20 +26,18 @@ let parsingError (err: string) = RequestErrors.BAD_REQUEST err
 let webApp =
     choose
         [ route "/index" >=> Handlers.getIndex ()
-          subRouteCi
-              "/account"
-              (choose
-                  [ GET
-                    >=> choose
-                            [ routeCi "/login" >=> Handlers.getLogin ()
-                              routeCi "/signup" >=> Handlers.getSignup ()
-                              requiresAuthentication (challenge authScheme)
-                              >=> choose [ routeCi "/logout" >=> text "Logout is coming soon" ] ]
-                    POST
-                    >=> choose
-                            [ routeCi "/login" >=> Handlers.postLogin ()
-                              routeCi "/signup"
-                              >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ] ])
+          routeCi "/account/login" >=> choose [
+              GET >=> Handlers.getLogin ()
+              POST >=> tryBindForm<LoginInfo> parsingError None Handlers.postLogin
+          ]
+          routeCi "/account/signup" >=> choose [
+              GET >=> Handlers.getSignup ()
+              POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup
+          ]
+          requiresAuthentication (challenge authScheme)
+          >=> choose
+                  [ subRoute "/account" (choose [ routeCi "/logout" >=> text "logout is coming soon" ])
+                    route "/am-i-authenticated" >=> text "you are authenticated" ]
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
 let errorHandler (ex: Exception) (logger: ILogger) =

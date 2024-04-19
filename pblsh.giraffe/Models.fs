@@ -5,9 +5,16 @@ type Message = { Text: string }
 
 type RoutePart = { Text: string; Link: string }
 
-[<CLIMutable>]
-type UncheckedSignUpInfo = {
-    Email: string
-    Password: string
-    UserName: string
-}
+module Forms =
+    [<CLIMutable>]
+    type UncheckedSignUpInfo = {
+        Email: string
+        Password: string
+        UserName: string
+    }
+
+    [<CLIMutable>]
+    type LoginInfo = {
+        UserName: string
+        Password: string
+    }

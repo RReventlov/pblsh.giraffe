@@ -17,12 +17,15 @@ h1 {
     margin-top: 0;
 }
 
-form {
+.main-content {
     border: 1px solid var(--border-color);
     border-radius: .5rem;
     padding: 2rem 2.5rem;
     background: white;
     box-shadow: 0 0 10px hsl(0, 0%, 86%);
+}
+
+form {
     display: flex;
     flex-direction: column;
     gap: .5rem;
