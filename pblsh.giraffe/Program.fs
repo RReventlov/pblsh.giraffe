@@ -25,7 +25,8 @@ let parsingError (err: string) = RequestErrors.BAD_REQUEST err
 
 let webApp =
     choose
-        [ route "/index" >=> Handlers.getIndex ()
+        [ route "/" >=> redirectTo true "/index"
+          route "/index" >=> Handlers.getIndex ()
           routeCix "/account/login(.*)"
           >=> choose
                   [ GET >=> Handlers.getLogin ()
@@ -39,8 +40,9 @@ let webApp =
                   [ subRoute
                         "/account"
                         (choose
-                            [ routeCi "/logout" >=> text "logout is coming soon"
-                              routeCi "/me" >=> text "this is your account" ])
+                            [ routeCi "/logout" >=> Handlers.getLogout ()
+                              routeCi "/me" >=> Handlers.getAccount () ])
+                    route "/post/new" >=> Handlers.getNewPost ()
                     route "/am-i-authenticated" >=> text "you are authenticated" ]
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
@@ -59,6 +61,7 @@ let configureApp (app: IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
 
     app.UseAuthentication() |> ignore
+    app.UseSession() |> ignore
 
     (match env.IsDevelopment() with
      | true -> app.UseDeveloperExceptionPage()
@@ -81,7 +84,7 @@ let configureServices (services: IServiceCollection) =
 
     services
         .AddDbContext<ApplicationDbContext>(fun o ->
-            o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh.identity;trusted_connection=true")
+            o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh;trusted_connection=true")
             |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()

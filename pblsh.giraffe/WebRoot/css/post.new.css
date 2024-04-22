@@ -1,0 +1,67 @@
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+label {
+    font-weight: bold;
+    margin-top: .5rem;
+}
+
+label:first-of-type {
+    margin-top: 0;
+}
+
+input {
+    padding: .5rem;
+}
+
+input[type="submit"], input[type="reset"] {
+    border-radius: .5rem;
+    cursor: pointer;
+}
+
+#titleInput {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#btn-group {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+}
+
+#dotList {
+    display: flex;
+    flex-direction: row;
+}
+
+.dot {
+    display: flex;
+    background: var(--secondary-color);
+    padding: .125rem .25rem;
+    border-radius: .5rem;
+    color: black;
+    gap: .125rem;
+    /*font-weight: bold;*/
+}
+
+.dot > button {
+    background: transparent;
+    border-radius: 50rem;
+    padding: 0;
+    border: none;
+    height: 16px;
+    width: 16px;
+}
+
+.dot > button > img {
+    color: white;
+}
+
+.dot:hover > button {
+    background: hsl(240, 67%, 100%);
+}

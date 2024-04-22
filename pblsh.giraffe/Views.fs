@@ -3,6 +3,7 @@
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Components
+open pblsh.Models
 open pblsh.Models.QueryStrings
 
 
@@ -20,10 +21,10 @@ let randomPostCard _ =
                 a [ _href "#"; _class "postcard-author" ] [ encodedText "pblsh.dev" ] ]
           div [ _class "postcard-tags" ] [ yield! [ "blog"; "programming" ] |> List.map dot ] ]
 
-let index () =
+let index (userInfo: UserInfo option) =
     let elements = List.ofSeq { 1..10 }
 
-    [ filledTopRow ()
+    [ accountTopRow userInfo
       navigation [ { Text = "Home"; Link = "/index" } ]
       main [] [ div [] (elements |> List.map randomPostCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
@@ -33,6 +34,7 @@ let login (redirectAfterLogin: RedirectInfo option) =
         match redirectAfterLogin with
         | Some r -> sprintf "login?ReturnUrl=%s" r.ReturnUrl
         | None -> "login"
+
     [ form
           [ _action actionUrl; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Log in" ]
@@ -78,3 +80,40 @@ let signUpComplete () =
           [ h1 [] [ encodedText "Thanks for signing up!" ]
             div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ] ]
     |> dialog "pblsh.confirm"
+
+let me userInfo =
+    [ accountTopRow (Some userInfo)
+      navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = "Account"
+              Link = "/account/me" } ]
+      main
+          []
+          [ h1 [] [ encodedText (userInfo.UserName.ToUpper()) ]
+            a [ _class "action"; _href "/account/logout" ] [ encodedText "Log out" ] ] ]
+    |> titledLayout "pblsh.account"
+
+let newPost userInfo =
+    [ accountTopRow (Some userInfo)
+      navigation [ { Text = "Home"; Link = "/index" }; { Text = "Post"; Link = "/post/new" } ]
+      main
+          []
+          [ form
+                [ _id "newPost"; _action "post" ]
+                [ label [ _for "titleInput" ] [ encodedText "Title" ]
+                  input [ _id "titleInput"; _type "textbox" ]
+                  label [ _for "dotList" ] [ encodedText "Dots" ]
+                  input
+                      [ _id "dotInput"
+                        _type "textbox"
+                        _placeholder "Use . to separate dots"
+                        _list "dotDataList" ]
+                  datalist [ _id "dotDataList" ] [ option [ _value "blog" ] [] ]
+                  div
+                      [ _id "dotList" ]
+                      [ div [ _class "dot" ] [ encodedText "blog"; button [] [ img [ _src "/icons/x.svg" ] ] ] ]
+                  div
+                      [ _id "btn-group" ]
+                      [ input [ _type "submit"; _value "Publish post"; _class "filled-action" ]
+                        input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
+    |> titledLayoutCss [ "post.new.css" ] "New post"

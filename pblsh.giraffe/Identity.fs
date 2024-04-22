@@ -15,7 +15,7 @@ type ApplicationDbContextFactory() =
             let optionsBuilder = DbContextOptionsBuilder<ApplicationDbContext>()
 
             optionsBuilder.UseSqlServer(
-                "data source=Orion\MSSQLSERVER03;initial catalog=pblsh.identity;trusted_connection=true"
+                "data source=Orion\MSSQLSERVER03;initial catalog=pblsh;trusted_connection=true"
             )
             |> ignore
 

@@ -11,6 +11,7 @@ let titledLayoutCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle:
               []
               [ title [] [ encodedText pageTitle ]
                 link [ _rel "stylesheet"; _type "text/css"; _href "/css/pblsh.reboot.css" ]
+                link [ _rel "stylesheet"; _type "text/css"; _href "/css/pblsh.animations.css" ]
                 link [ _rel "stylesheet"; _type "text/css"; _href "/css/pblsh.css" ]
                 yield!
                     cssFiles
@@ -35,11 +36,16 @@ let topRow (middle: XmlNode list) (right: XmlNode list) =
           div [ _id "header-middle" ] middle
           div [ _id "header-right" ] right ]
 
-let filledTopRow () =
+let accountTopRow (userInfo: UserInfo option) =
     topRow
         [ input [ _id "search"; _type "input"; _placeholder "Search..." ] ]
-        [ div [ _class "action" ] [ a [ _id "login"; _href "/account/login" ] [ encodedText "Log in" ] ]
-          div [ _class "filled-action" ] [ a [ _id "signup"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
+        [ match userInfo with
+          | Some u ->
+              a [ _id "newpost"; _class "action"; _href "/post/new" ] [ encodedText "New post" ]
+              a [ _id "account"; _class "filled-action"; _href "/account/me" ] [ encodedText u.UserName ]      
+          | None ->
+              a [ _id "login"; _class "action"; _href "/account/login" ] [ encodedText "Log in" ]
+              a [ _id "signup"; _class "filled-action"; _href "/account/signup" ] [ encodedText "Sign up" ] ]
 
 
 let emptyTopRow () = topRow [] []
