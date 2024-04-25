@@ -12,9 +12,9 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open pblsh.Models.Forms
-open pblsh.Models.QueryStrings
+open pblsh.Literals
 open pblsh.giraffe.Identity
+open pblsh.Models.Forms
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
@@ -83,9 +83,7 @@ let configureServices (services: IServiceCollection) =
     |> ignore
 
     services
-        .AddDbContext<ApplicationDbContext>(fun o ->
-            o.UseSqlServer("data source=Orion\MSSQLSERVER03;initial catalog=pblsh;trusted_connection=true")
-            |> ignore)
+        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(connectionString) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
     |> ignore
