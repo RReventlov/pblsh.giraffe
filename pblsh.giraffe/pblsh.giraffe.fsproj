@@ -38,12 +38,7 @@
     <ItemGroup>
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest"/>
         <Content Include="WebRoot\**\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.json" />
-      <Content Include="appsettings.dev.json" />
     </ItemGroup>
 </Project>

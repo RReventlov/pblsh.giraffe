@@ -46,7 +46,7 @@ let login (redirectAfterLogin: RedirectInfo option) =
       div
           []
           [ span [] [ encodedText "Don't have an account? " ]
-            a [ _class "action-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
+            a [ _class "web-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
     |> dialogCss [ "login.css" ] "pblsh.login"
 
 let signup () =
@@ -63,7 +63,7 @@ let signup () =
       div
           []
           [ span [] [ encodedText "Already signed up? " ]
-            a [ _class "action-link"; _href "/account/login" ] [ encodedText "Log in" ] ] ]
+            a [ _class "web-link"; _href "/account/login" ] [ encodedText "Log in" ] ] ]
     |> dialog "pblsh.signup"
 
 let errorWithRedirect (link: string) =
@@ -106,14 +106,21 @@ let newPost userInfo =
                   input
                       [ _id "dotInput"
                         _type "textbox"
-                        _placeholder "Use . to separate dots"
+                        _placeholder "Add dots to categorize your post."
                         _list "dotDataList" ]
                   datalist [ _id "dotDataList" ] [ option [ _value "blog" ] [] ]
                   div
                       [ _id "dotList" ]
                       [ div [ _class "dot" ] [ encodedText "blog"; button [] [ img [ _src "/icons/x.svg" ] ] ] ]
+                  label [ _for "docInput" ] [ encodedText "Upload file to publish" ]
+                  div
+                      []
+                      [ encodedText "Supplied files should follow the "
+                        a [ _href "https://commonmark.org/"; _class "web-link" ] [ encodedText "CommonMark" ]
+                        encodedText " standard to ensure they are rendered correctly." ]
+                  input [ _id "docInput"; _type "file"; _accept ".md" ]
                   div
                       [ _id "btn-group" ]
-                      [ input [ _type "submit"; _value "Publish post"; _class "filled-action" ]
+                      [ input [ _type "submit"; _value "Publish post"; _class "filled-action excited" ]
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"

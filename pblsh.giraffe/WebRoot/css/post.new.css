@@ -41,27 +41,24 @@ input[type="submit"], input[type="reset"] {
 
 .dot {
     display: flex;
-    background: var(--secondary-color);
+    border: 1px solid var(--action-color);
     padding: .125rem .25rem;
     border-radius: .5rem;
-    color: black;
     gap: .125rem;
-    /*font-weight: bold;*/
 }
 
 .dot > button {
     background: transparent;
-    border-radius: 50rem;
-    padding: 0;
-    border: none;
-    height: 16px;
-    width: 16px;
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5rem;
+    padding: .1rem;
+    transition: border-color .125s;
 }
 
-.dot > button > img {
-    color: white;
-}
-
-.dot:hover > button {
-    background: hsl(240, 67%, 100%);
+.dot > button:hover {
+    border-color: var(--action-color);
+    transition: border-color .125s;
 }

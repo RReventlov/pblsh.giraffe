@@ -5,6 +5,7 @@ open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Identity.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Design
+open pblsh.Literals
 
 type ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>) =
     inherit IdentityDbContext(options)
@@ -14,9 +15,6 @@ type ApplicationDbContextFactory() =
         member _.CreateDbContext(args: string[]) =
             let optionsBuilder = DbContextOptionsBuilder<ApplicationDbContext>()
 
-            optionsBuilder.UseSqlServer(
-                "data source=Orion\MSSQLSERVER03;initial catalog=pblsh;trusted_connection=true"
-            )
-            |> ignore
+            optionsBuilder.UseSqlServer(connectionString) |> ignore
 
             new ApplicationDbContext(optionsBuilder.Options)

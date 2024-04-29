@@ -5,6 +5,7 @@
     display: grid;
     grid-template-rows: auto auto 1fr;
     --main-color: hsl(259, 79%, 20%);
+    --inverted-main-color: hsl(79, 78%, 20%);
     --secondary-color: hsl(240, 67%, 94%);
     --action-color: hsl(259, 79%, 60%);
     --action-color-hover: hsl(259, 79%, 65%);
@@ -40,7 +41,7 @@ header {
 #search {
     width: 100%;
     height: 28px;
-    padding: 0!important;
+    padding: 0 !important;
 }
 
 #header-right {
@@ -102,14 +103,10 @@ main {
     transition: background .125s;
 }
 
-.action:hover {
-    background: hsl(0, 0%, 95%);
-    transition: background .125s;
-}
-
-.action-link {
-    color: var(--action-color);
-}
+/*.action:hover {*/
+/*    background: hsl(0, 0%, 95%);*/
+/*    transition: background .125s;*/
+/*}*/
 
 .filled-action {
     border: 1px solid var(--action-color);
@@ -120,7 +117,8 @@ main {
     transition: background .125s, border .125s;
 }
 
-.filled-action:hover {
+.filled-action:hover, .action:hover {
+    color: white;
     background: var(--action-color-hover);
     border: 1px solid var(--action-color-hover);
     transition: background .125s, border .125s;
@@ -144,4 +142,8 @@ main {
 
 button:hover {
     cursor: pointer;
+}
+
+.web-link {
+    color: var(--action-color);
 }
