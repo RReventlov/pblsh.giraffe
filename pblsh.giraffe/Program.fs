@@ -8,11 +8,11 @@ open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Identity
 open Microsoft.EntityFrameworkCore
+open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open pblsh.Literals
 open pblsh.giraffe.Identity
 open pblsh.Models.Forms
 
@@ -50,6 +50,9 @@ let errorHandler (ex: Exception) (logger: ILogger) =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
     clearResponse >=> setStatusCode 500 >=> text ex.Message
 
+let configureAppConfiguration (builder: IConfigurationBuilder) =
+    builder.AddJsonFile("appsettings.json", true) |> ignore
+
 let configureCors (builder: CorsPolicyBuilder) =
     builder
         .WithOrigins("http://localhost:5000", "https://localhost:5001")
@@ -70,7 +73,7 @@ let configureApp (app: IApplicationBuilder) =
         .UseStaticFiles()
         .UseGiraffe(webApp)
 
-let configureServices (services: IServiceCollection) =
+let configureServices (config: IConfiguration) (services: IServiceCollection) =
     services.AddCors() |> ignore
     services.AddGiraffe() |> ignore
     services.AddAuthentication().AddCookie(authScheme) |> ignore
@@ -81,9 +84,9 @@ let configureServices (services: IServiceCollection) =
             o.LowercaseUrls <- true
             o.LowercaseQueryStrings <- true)
     |> ignore
-
+    
     services
-        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(connectionString) |> ignore)
+        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(config["connectionString"]) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
     |> ignore
@@ -101,15 +104,23 @@ let configureLogging (builder: ILoggingBuilder) =
 let main args =
     let contentRoot = Directory.GetCurrentDirectory()
     let webRoot = Path.Combine(contentRoot, "WebRoot")
-
+    
+    let config =
+        ConfigurationBuilder()
+            .SetBasePath(contentRoot)
+            .AddJsonFile("appsettings.json", false)
+            .Build()
+    
     Host
         .CreateDefaultBuilder(args)
+        .ConfigureAppConfiguration(configureAppConfiguration)
         .ConfigureWebHostDefaults(fun webHostBuilder ->
             webHostBuilder
+                .UseConfiguration(config)
                 .UseContentRoot(contentRoot)
                 .UseWebRoot(webRoot)
                 .Configure(Action<IApplicationBuilder> configureApp)
-                .ConfigureServices(configureServices)
+                .ConfigureServices(configureServices config)
                 .ConfigureLogging(configureLogging)
             |> ignore)
         .Build()

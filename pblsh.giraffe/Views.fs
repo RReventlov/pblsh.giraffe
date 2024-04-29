@@ -106,7 +106,7 @@ let newPost userInfo =
                   input
                       [ _id "dotInput"
                         _type "textbox"
-                        _placeholder "Add dots to categorize your post."
+                        _placeholder "Adding dots helps readers to find your post."
                         _list "dotDataList" ]
                   datalist [ _id "dotDataList" ] [ option [ _value "blog" ] [] ]
                   div
