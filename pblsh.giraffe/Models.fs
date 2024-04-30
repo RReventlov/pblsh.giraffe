@@ -21,18 +21,15 @@ module Forms =
     type LoginInfo = { UserName: string; Password: string }
 
     [<CLIMutable>]
-    type NewPostInfo =
-        { Title: string
-          Dots: string }
-        
-    type ValidatedNewPostInfo = {
-        Title: string5
-        Dots: string
-    }
-    
+    type NewPostInfo = { Title: string; Dots: string }
+
+    type ValidatedNewPostInfo = { Title: string5; Dots: string }
+
+    type SearchContent = { Query: string }
+
     module NewPostInfo =
         let validate newPostInfo = ()
-            
+
 
 module QueryStrings =
 

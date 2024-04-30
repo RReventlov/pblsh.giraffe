@@ -27,6 +27,7 @@ let parsingError (err: string) = RequestErrors.BAD_REQUEST err
 let webApp =
     choose
         [ route "/" >=> redirectTo true "/index"
+          routeCi "/search" >=> text "hi" //>=> POST >=> tryBindForm<SearchContent> parsingError None Handlers.postSearch
           route "/index" >=> Handlers.getIndex ()
           routeCix "/account/login(.*)"
           >=> choose
