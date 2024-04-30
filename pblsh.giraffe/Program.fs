@@ -37,6 +37,10 @@ let webApp =
                   [ GET >=> Handlers.getSignup ()
                     POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ]
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛"
+          // Placing handlers that do not require authentication below this line will result in them requiring
+          // authentication as well.
+          // This is because requiresAuthentication will count failing the authentication as a *hit* and then redirect
+          // the user to the login page.
           requiresAuthentication (challenge authScheme)
           >=> choose
                   [ subRoute
