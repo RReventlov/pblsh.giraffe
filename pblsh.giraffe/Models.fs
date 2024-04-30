@@ -23,16 +23,7 @@ module Forms =
     [<CLIMutable>]
     type NewPostInfo =
         { Title: string
-          Dots: string }
-        
-    type ValidatedNewPostInfo = {
-        Title: string5
-        Dots: string
-    }
-    
-    module NewPostInfo =
-        let validate newPostInfo = ()
-            
+          Dots: string }            
 
 module QueryStrings =
 
