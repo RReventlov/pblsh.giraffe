@@ -78,7 +78,8 @@ let signUpComplete () =
     [ div
           [ _class "main-content" ]
           [ h1 [] [ encodedText "Thanks for signing up!" ]
-            div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ] ] ]
+            // div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ]
+            ] ]
     |> dialog "pblsh.confirm"
 
 let me userInfo =
@@ -93,32 +94,33 @@ let me userInfo =
             a [ _class "action"; _href "/account/logout" ] [ encodedText "Log out" ] ] ]
     |> titledLayout "pblsh.account"
 
-let newPost userInfo =
+let newPost userInfo (errors: string list) =
     [ accountTopRow (Some userInfo)
-      navigation [ { Text = "Home"; Link = "/index" }; { Text = "Post"; Link = "/post/new" } ]
+      navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = "New Post"
+              Link = "/post/new" } ]
       main
           []
           [ form
-                [ _id "newPost"; _action "post" ]
-                [ label [ _for "titleInput" ] [ encodedText "Title" ]
-                  input [ _id "titleInput"; _type "textbox" ]
-                  label [ _for "dotList" ] [ encodedText "Dots" ]
+                [ _action "new"; _method "post"; _enctype "multipart/form-data" ]
+                [ label [ _for "title" ] [ encodedText "Title" ]
+                  input [ _id "title"; _type "text"; _name "title" ]
+                  label [ _for "dots" ] [ encodedText "Dots" ]
                   input
-                      [ _id "dotInput"
-                        _type "textbox"
-                        _placeholder "Adding dots helps readers to find your post."
+                      [ _id "dots"
+                        _type "text"
+                        _name "dots"
+                        _placeholder "Adding dots helps readers to find your post. Separate dots with a '.'."
                         _list "dotDataList" ]
                   datalist [ _id "dotDataList" ] [ option [ _value "blog" ] [] ]
-                  div
-                      [ _id "dotList" ]
-                      [ div [ _class "dot" ] [ encodedText "blog"; button [] [ img [ _src "/icons/x.svg" ] ] ] ]
-                  label [ _for "docInput" ] [ encodedText "Upload file to publish" ]
+                  label [ _for "file" ] [ encodedText "Upload file to publish" ]
                   div
                       []
                       [ encodedText "Supplied files should follow the "
-                        a [ _href "https://commonmark.org/"; _class "web-link" ] [ encodedText "CommonMark" ]
+                        a [ _href "https://commonmark.org/"; _target "_blank"; _class "web-link" ] [ encodedText "CommonMark" ]
                         encodedText " standard to ensure they are rendered correctly." ]
-                  input [ _id "docInput"; _type "file"; _accept ".md" ]
+                  input [ _id "file"; _type "file"; _name "file"; _accept ".md" ]
                   div
                       [ _id "btn-group" ]
                       [ input [ _type "submit"; _value "Publish post"; _class "filled-action excited" ]

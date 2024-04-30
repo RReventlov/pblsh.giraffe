@@ -1,16 +1,24 @@
 ﻿module pblsh.Handlers
 
+open System.Threading
 open Giraffe
+open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
 open pblsh.Models
 open pblsh.Models.Forms
 open pblsh.Models.QueryStrings
 
+let getForm (ctx: HttpContext) =
+    task {
+        let formFeature = ctx.Features.Get<IFormFeature>()
+        return! formFeature.ReadFormAsync CancellationToken.None
+    }
+
 let getUser (ctx: HttpContext) = { UserName = ctx.User.Identity.Name }
 
 let getUserOption (ctx: HttpContext) =
-    if (ctx.User.Identity.IsAuthenticated) then
+    if ctx.User.Identity.IsAuthenticated then
         Some(getUser ctx)
     else
         None
@@ -30,7 +38,7 @@ let getLogin () : HttpHandler =
         let view = Views.login redirectAfterLogin
         htmlView view next ctx
 
-let postLogin (loginInfo: Forms.LoginInfo) : HttpHandler =
+let postLogin (loginInfo: LoginInfo) : HttpHandler =
     fun next ctx ->
         task {
             let loginManager = ctx.GetService<SignInManager<IdentityUser>>()
@@ -78,7 +86,7 @@ let getLogout () : HttpHandler =
     fun next ctx ->
         task {
             let loginManager = ctx.GetService<SignInManager<IdentityUser>>()
-            let! logout = loginManager.SignOutAsync()
+            let! _ = loginManager.SignOutAsync()
 
             return! redirectTo true "/index" next ctx
         }
@@ -87,5 +95,21 @@ let getNewPost () : HttpHandler =
     fun next ctx ->
         let userInfo = getUser ctx
 
-        htmlView (Views.newPost userInfo) next ctx
+        htmlView (Views.newPost userInfo []) next ctx
 
+let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
+    fun next ctx ->
+        task {
+            let! form = getForm ctx
+            let files = form.Files |> Seq.fold (fun a s -> sprintf "%s\n%s" a s.FileName) ""
+
+            return!
+                htmlView
+                    (Giraffe.ViewEngine.HtmlElements.p
+                        []
+                        [ Giraffe.ViewEngine.HtmlElements.encodedText (
+                              sprintf "%s\n\nFiles:%s" (newPostInfo.ToString()) files
+                          ) ])
+                    next
+                    ctx
+        }

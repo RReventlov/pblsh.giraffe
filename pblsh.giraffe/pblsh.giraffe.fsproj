@@ -25,6 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="ComputationExpressions.fs" />
+        <Compile Include="Types.fs" />
         <Compile Include="Identity.fs" />
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
@@ -34,7 +36,7 @@
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup> 
         <Content Include="appsettings.json" />
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest"/>
         <Content Include="WebRoot\**\*">

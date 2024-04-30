@@ -47,7 +47,6 @@ let accountTopRow (userInfo: UserInfo option) =
               a [ _id "login"; _class "action"; _href "/account/login" ] [ encodedText "Log in" ]
               a [ _id "signup"; _class "filled-action"; _href "/account/signup" ] [ encodedText "Sign up" ] ]
 
-
 let emptyTopRow () = topRow [] []
 
 let private routeElement (routePart: RoutePart) =

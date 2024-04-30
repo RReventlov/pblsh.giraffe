@@ -13,8 +13,9 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open pblsh.giraffe.Identity
+open pblsh.Models
 open pblsh.Models.Forms
+open pblsh.giraffe.Identity
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
@@ -42,7 +43,8 @@ let webApp =
                         (choose
                             [ routeCi "/logout" >=> Handlers.getLogout ()
                               routeCi "/me" >=> Handlers.getAccount () ])
-                    route "/post/new" >=> Handlers.getNewPost ()
+                    GET >=> route "/post/new" >=> Handlers.getNewPost ()
+                    POST >=> route "/post/new" >=> bindForm<NewPostInfo> None Handlers.postNewPost
                     route "/am-i-authenticated" >=> text "you are authenticated" ]
           setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 

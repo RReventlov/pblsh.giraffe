@@ -147,3 +147,7 @@ button:hover {
 .web-link {
     color: var(--action-color);
 }
+
+input[type=file]:hover {
+    cursor: pointer;
+}
