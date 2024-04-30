@@ -36,6 +36,7 @@ let webApp =
           >=> choose
                   [ GET >=> Handlers.getSignup ()
                     POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ]
+          setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛"
           requiresAuthentication (challenge authScheme)
           >=> choose
                   [ subRoute
@@ -45,8 +46,7 @@ let webApp =
                               routeCi "/me" >=> Handlers.getAccount () ])
                     GET >=> route "/post/new" >=> Handlers.getNewPost ()
                     POST >=> route "/post/new" >=> bindForm<NewPostInfo> None Handlers.postNewPost
-                    route "/am-i-authenticated" >=> text "you are authenticated" ]
-          setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
+                    route "/am-i-authenticated" >=> text "you are authenticated" ] ]
 
 let errorHandler (ex: Exception) (logger: ILogger) =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
@@ -86,7 +86,7 @@ let configureServices (config: IConfiguration) (services: IServiceCollection) =
             o.LowercaseUrls <- true
             o.LowercaseQueryStrings <- true)
     |> ignore
-    
+
     services
         .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(config["connectionString"]) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
@@ -106,13 +106,13 @@ let configureLogging (builder: ILoggingBuilder) =
 let main args =
     let contentRoot = Directory.GetCurrentDirectory()
     let webRoot = Path.Combine(contentRoot, "WebRoot")
-    
+
     let config =
         ConfigurationBuilder()
             .SetBasePath(contentRoot)
             .AddJsonFile("appsettings.json", false)
             .Build()
-    
+
     Host
         .CreateDefaultBuilder(args)
         .ConfigureAppConfiguration(configureAppConfiguration)
