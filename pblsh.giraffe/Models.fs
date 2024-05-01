@@ -1,14 +1,9 @@
 ﻿module pblsh.Models
 
-open Microsoft.AspNetCore.Http
+open System
 open pblsh.Types
+open pblsh.Paths
 
-
-type Message = { Text: string }
-
-type RoutePart = { Text: string; Link: string }
-
-type UserInfo = { UserName: string }
 
 module Forms =
     [<CLIMutable>]
@@ -21,11 +16,38 @@ module Forms =
     type LoginInfo = { UserName: string; Password: string }
 
     [<CLIMutable>]
-    type NewPostInfo =
-        { Title: string
-          Dots: string }            
+    type NewPostInfo = { Title: string; Dots: string }
+
+open Forms
 
 module QueryStrings =
 
     [<CLIMutable>]
     type RedirectInfo = { ReturnUrl: string }
+
+
+type UserInfo = { UserName: string }
+
+type Post =
+    { Id: Guid
+      Author: Guid
+      Title: String5
+      Dots: string list
+      PublishedOn: DateTime
+      UniqueViews: Int0 }
+
+module Post =
+    type PostErrors = | TitleTooShort
+
+    let create id author title dots publishedOn uniqueViews =
+        mapResult (String5.create title)
+        |>^ (fun title5 ->
+            { Id = id
+              Author = author
+              Title = title5
+              Dots = dots
+              PublishedOn = publishedOn
+              UniqueViews = uniqueViews })
+
+    let createNew author title dots =
+        create (Guid.NewGuid()) author title dots DateTime.Now (Int0.zero)

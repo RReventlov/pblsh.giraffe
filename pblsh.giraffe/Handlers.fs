@@ -1,13 +1,16 @@
 ﻿module pblsh.Handlers
 
+open System
 open System.Threading
 open Giraffe
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
+open pblsh.Paths
 open pblsh.Models
 open pblsh.Models.Forms
 open pblsh.Models.QueryStrings
+open pblsh.Workflows
 
 let getForm (ctx: HttpContext) =
     task {
@@ -101,15 +104,11 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
     fun next ctx ->
         task {
             let! form = getForm ctx
-            let files = form.Files |> Seq.fold (fun a s -> sprintf "%s\n%s" a s.FileName) ""
-
+            let authorId = Guid.NewGuid ()
+            let dots = []
+            
             return!
-                htmlView
-                    (Giraffe.ViewEngine.HtmlElements.p
-                        []
-                        [ Giraffe.ViewEngine.HtmlElements.encodedText (
-                              sprintf "%s\n\nFiles:%s" (newPostInfo.ToString()) files
-                          ) ])
-                    next
-                    ctx
+                match Posts.saveNewPost authorId newPostInfo.Title dots form.Files with
+                | Happy h -> redirectTo true (sprintf "/post/%s" (h.Id.ToString())) next ctx
+                | Sad s -> htmlView (Views.errorWithRedirect "") next ctx
         }
