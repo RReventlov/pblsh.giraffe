@@ -38,7 +38,13 @@ let topRow (middle: XmlNode list) (right: XmlNode list) =
 
 let accountTopRow (userInfo: UserInfo option) =
     topRow
-        [ input [ _id "search"; _type "input"; _placeholder "Search..." ] ]
+        [
+            form [ _action "/search"; _method "post" ] [
+                input [ _id "search"; _type "input"; _name "Query"; _placeholder "Search..." ]
+                input [ _type "submit"; _style "display:none" ]
+            ]
+            
+        ]
         [ match userInfo with
           | Some u ->
               a [ _id "newpost"; _class "action"; _href "/post/new" ] [ encodedText "New post" ]

@@ -1,0 +1,12 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1bcb59ab_002Df9e5_002D4f4b_002Da545_002D64cca0c67b8e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="pAuthor test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F52AB44E-93B0-4259-A7BE-A485D8D8A263::net8.0::pblsh.test.Parser.pAuthor test&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8fe94055_002D46f3_002D46e7_002D99e7_002Dc24c7a10fce9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="pAuthor .&amp;gt;&amp;gt;. pDots test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F52AB44E-93B0-4259-A7BE-A485D8D8A263::net8.0::pblsh.test.Parser.pAuthor .&amp;gt;&amp;gt;. pDots test&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>
