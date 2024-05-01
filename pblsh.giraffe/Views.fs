@@ -10,7 +10,7 @@ open pblsh.Models.QueryStrings
 let randomPostCard _ =
     div
         [ _class "postcard" ]
-        [ h2 [] [ a [ _href "posts/post-id" ] [ encodedText "How to build a medium Medium-Clone" ] ]
+        [ h2 [] [ a [ _href "/posts/post-id" ] [ encodedText "How to build a medium Medium-Clone" ] ]
           div
               []
               [ encodedText
@@ -99,7 +99,7 @@ let newPost userInfo (errors: string list) =
       navigation
           [ { Text = "Home"; Link = "/index" }
             { Text = "New Post"
-              Link = "/post/new" } ]
+              Link = Urls.newPost } ]
       main
           []
           [ form

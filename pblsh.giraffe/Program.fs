@@ -13,7 +13,7 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open pblsh.Models
+open pblsh.Configuration
 open pblsh.Models.Forms
 open pblsh.giraffe.Identity
 
@@ -23,6 +23,9 @@ let logoutHandler () =
     signOut authScheme >=> redirectTo false "/index"
 
 let parsingError (err: string) = RequestErrors.BAD_REQUEST err
+
+let authenticatedRoute path =
+    route path >=> requiresAuthentication (challenge authScheme)
 
 let webApp =
     choose
@@ -36,21 +39,19 @@ let webApp =
           >=> choose
                   [ GET >=> Handlers.getSignup ()
                     POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ]
-          setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛"
-          // Placing handlers that do not require authentication below this line will result in them requiring
-          // authentication as well.
-          // This is because requiresAuthentication will count failing the authentication as a *hit* and then redirect
-          // the user to the login page.
-          requiresAuthentication (challenge authScheme)
+
+          subRoute
+              "/account"
+              (requiresAuthentication (challenge authScheme)
+               >=> choose
+                       [ route "/logout" >=> Handlers.getLogout ()
+                         route "/me" >=> Handlers.getAccount () ])
+          route Urls.newPost
+          >=> requiresAuthentication (challenge authScheme)
           >=> choose
-                  [ subRoute
-                        "/account"
-                        (choose
-                            [ routeCi "/logout" >=> Handlers.getLogout ()
-                              routeCi "/me" >=> Handlers.getAccount () ])
-                    GET >=> route "/post/new" >=> Handlers.getNewPost ()
-                    POST >=> route "/post/new" >=> bindForm<NewPostInfo> None Handlers.postNewPost
-                    route "/am-i-authenticated" >=> text "you are authenticated" ] ]
+                  [ GET >=> Handlers.getNewPost ()
+                    POST >=> bindForm<NewPostInfo> None Handlers.postNewPost ]
+          setStatusCode 404 >=> text "🐈 Not Found 🐈‍⬛" ]
 
 let errorHandler (ex: Exception) (logger: ILogger) =
     logger.LogError(ex, "An unhandled exception has occurred while executing the request.")
@@ -79,7 +80,7 @@ let configureApp (app: IApplicationBuilder) =
         .UseStaticFiles()
         .UseGiraffe(webApp)
 
-let configureServices (config: IConfiguration) (services: IServiceCollection) =
+let configureServices (configuration: IConfiguration) (services: IServiceCollection) =
     services.AddCors() |> ignore
     services.AddGiraffe() |> ignore
     services.AddAuthentication().AddCookie(authScheme) |> ignore
@@ -92,7 +93,7 @@ let configureServices (config: IConfiguration) (services: IServiceCollection) =
     |> ignore
 
     services
-        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(config["connectionString"]) |> ignore)
+        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(configuration["connectionString"]) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
     |> ignore
@@ -108,25 +109,17 @@ let configureLogging (builder: ILoggingBuilder) =
 
 [<EntryPoint>]
 let main args =
-    let contentRoot = Directory.GetCurrentDirectory()
-    let webRoot = Path.Combine(contentRoot, "WebRoot")
-
-    let config =
-        ConfigurationBuilder()
-            .SetBasePath(contentRoot)
-            .AddJsonFile("appsettings.json", false)
-            .Build()
 
     Host
         .CreateDefaultBuilder(args)
         .ConfigureAppConfiguration(configureAppConfiguration)
         .ConfigureWebHostDefaults(fun webHostBuilder ->
             webHostBuilder
-                .UseConfiguration(config)
+                .UseConfiguration(configuration)
                 .UseContentRoot(contentRoot)
                 .UseWebRoot(webRoot)
                 .Configure(Action<IApplicationBuilder> configureApp)
-                .ConfigureServices(configureServices config)
+                .ConfigureServices(configureServices configuration)
                 .ConfigureLogging(configureLogging)
             |> ignore)
         .Build()
