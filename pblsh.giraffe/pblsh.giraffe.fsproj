@@ -25,10 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="Paths.fs" />
+        <Compile Include="Configuration.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Identity.fs" />
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
+        <Compile Include="Workflows.fs" />
+        <Compile Include="Urls.fs" />
         <Compile Include="Components.fs" />
         <Compile Include="Views.fs" />
         <Compile Include="Handlers.fs" />
@@ -42,10 +46,5 @@
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.json" />
-      <Content Include="appsettings.dev.json" />
     </ItemGroup>
 </Project>

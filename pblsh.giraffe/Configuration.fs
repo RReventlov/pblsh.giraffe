@@ -1,7 +1,14 @@
 module pblsh.Configuration
 
-type AppSettings = { ConnectionString: string }
+open System.IO
+open Microsoft.Extensions.Configuration
 
-let appSettings =
-    let text = System.IO.File.ReadAllText "appsettings.dev.json"
-    System.Text.Json.JsonSerializer.Deserialize<AppSettings> text
+let contentRoot = Directory.GetCurrentDirectory()
+let webRoot = Path.Combine(contentRoot, "WebRoot")
+    
+let configuration =
+    ConfigurationBuilder()
+        .SetBasePath(contentRoot)
+        .AddJsonFile("appsettings.json", false)
+        .AddJsonFile("appsettings.development.json", true)
+        .Build()
