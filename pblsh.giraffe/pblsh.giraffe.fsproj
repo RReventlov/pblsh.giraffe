@@ -28,9 +28,9 @@
         <Compile Include="Paths.fs" />
         <Compile Include="Configuration.fs" />
         <Compile Include="Types.fs" />
-        <Compile Include="Identity.fs" />
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
+        <Compile Include="DataAccess.fs" />
         <Compile Include="Workflows.fs" />
         <Compile Include="Urls.fs" />
         <Compile Include="Components.fs" />
@@ -46,5 +46,9 @@
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
     </ItemGroup>
 </Project>

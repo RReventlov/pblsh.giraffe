@@ -5,7 +5,8 @@ open Microsoft.Extensions.Configuration
 
 let contentRoot = Directory.GetCurrentDirectory()
 let webRoot = Path.Combine(contentRoot, "WebRoot")
-    
+
+/// Contains configuration on paths and Db-Connections
 let configuration =
     ConfigurationBuilder()
         .SetBasePath(contentRoot)

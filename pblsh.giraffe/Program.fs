@@ -1,7 +1,6 @@
 module pblsh.App
 
 open System
-open System.IO
 open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
@@ -15,7 +14,7 @@ open Microsoft.Extensions.DependencyInjection
 open Giraffe
 open pblsh.Configuration
 open pblsh.Models.Forms
-open pblsh.giraffe.Identity
+open pblsh.DataAccess
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
