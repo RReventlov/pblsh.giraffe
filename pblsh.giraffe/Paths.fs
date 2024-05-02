@@ -28,7 +28,7 @@ let deadEnd fn input =
     fn input
     input
 
-let slotIn fn input =
+let passBy fn input =
     fn ()
     input
 
