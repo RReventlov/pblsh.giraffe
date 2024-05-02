@@ -126,3 +126,20 @@ let newPost userInfo (errors: string list) =
                       [ input [ _type "submit"; _value "Publish post"; _class "filled-action excited" ]
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"
+    
+let search (userInfo: UserInfo option) (query: string) (results: string list) =
+    [accountTopRow userInfo
+     navigation [{ Text = "Home"; Link = "/index" }
+                 { Text = "Search"; Link = "/search" }
+                 { Text = (sprintf "\"%s\"" query); Link = "#" }]
+     main [] [
+         div [ _class "resultMetaDisplay" ] [    
+             h1 [ _class "queryDisplay" ] [ span [] [ encodedText "Search Results for \""
+                                                      span [ _class "query" ] [encodedText query]
+                                                      encodedText "\"" ]
+                                            ]
+             div [ _class "countDisplay" ] [encodedText (sprintf "%d Results found" results.Length)]
+         ]
+         div [] (results |> List.map randomPostCard) ]
+     ]
+     |> titledLayoutCss ["index.css"; "search.css"] "Search"

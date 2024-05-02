@@ -38,8 +38,9 @@ let postSearch (content: SearchContent) : HttpHandler =
             match Parser.Query.parse content with
             | Error e -> e
             | Ok o -> "parsing succeeded"
-        System.Console.WriteLine(queryResult)
-        htmlView (Components.layout [ HtmlElements.encodedText queryResult ]) next ctx
+        let results = ["";" "]   
+        let view = Views.search (getUserOption ctx) content.Query results   
+        htmlView view next ctx
   
 let getLogin () : HttpHandler =
     fun next ctx ->
