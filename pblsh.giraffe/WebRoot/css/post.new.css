@@ -62,3 +62,7 @@ input[type="submit"], input[type="reset"] {
     border-color: var(--action-color);
     transition: border-color .125s;
 }
+
+.error {
+    color: var(--warned-color);
+}

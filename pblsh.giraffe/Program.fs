@@ -71,6 +71,7 @@ let configureApp (app: IApplicationBuilder) =
 
     app.UseAuthentication() |> ignore
     app.UseSession() |> ignore
+    app.UseHttpsRedirection() |> ignore
 
     (match env.IsDevelopment() with
      | true -> app.UseDeveloperExceptionPage()
@@ -91,8 +92,9 @@ let configureServices (configuration: IConfiguration) (services: IServiceCollect
             o.LowercaseQueryStrings <- true)
     |> ignore
 
+    let connectionString = configuration["connectionString"]
     services
-        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlServer(configuration["connectionString"]) |> ignore)
+        .AddDbContext<ApplicationDbContext>(fun o -> o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
     |> ignore

@@ -7,14 +7,17 @@ open Microsoft.EntityFrameworkCore.Infrastructure
 open Microsoft.EntityFrameworkCore.Metadata
 open Microsoft.EntityFrameworkCore.Migrations
 open Microsoft.EntityFrameworkCore.Storage.ValueConversion
-open pblsh.giraffe
+open pblsh
 
-[<DbContext(typeof<Identity.ApplicationDbContext>)>]
-[<Migration("20240417122917_initial")>]
-type initial() =
+[<DbContext(typeof<DataAccess.ApplicationDbContext>)>]
+[<Migration("20240502125425_initial-mariadb")>]
+type initialmariadb() =
     inherit Migration()
 
     override this.Up(migrationBuilder:MigrationBuilder) =
+        migrationBuilder.AlterDatabase(
+            ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
+
         migrationBuilder.CreateTable(
             name = "AspNetRoles"
             ,columns = (fun table -> 
@@ -22,32 +25,32 @@ type initial() =
                 Id =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 Name =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 NormalizedName =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ConcurrencyStamp =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
                     table.PrimaryKey("PK_AspNetRoles", (fun x -> (x.Id) :> obj)
                     ) |> ignore
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetUsers"
@@ -56,76 +59,76 @@ type initial() =
                 Id =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 UserName =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 NormalizedUserName =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 Email =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 NormalizedEmail =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(256)"
+                        ,``type`` = "varchar(256)"
                         ,maxLength = Nullable(256)
-                    )
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 EmailConfirmed =
                     table.Column<bool>(
                         nullable = false
-                        ,``type`` = "bit"
+                        ,``type`` = "tinyint(1)"
                     )
                 PasswordHash =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 SecurityStamp =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ConcurrencyStamp =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 PhoneNumber =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 PhoneNumberConfirmed =
                     table.Column<bool>(
                         nullable = false
-                        ,``type`` = "bit"
+                        ,``type`` = "tinyint(1)"
                     )
                 TwoFactorEnabled =
                     table.Column<bool>(
                         nullable = false
-                        ,``type`` = "bit"
+                        ,``type`` = "tinyint(1)"
                     )
                 LockoutEnd =
                     table.Column<DateTimeOffset>(
                         nullable = true
-                        ,``type`` = "datetimeoffset"
+                        ,``type`` = "datetime(6)"
                     )
                 LockoutEnabled =
                     table.Column<bool>(
                         nullable = false
-                        ,``type`` = "bit"
+                        ,``type`` = "tinyint(1)"
                     )
                 AccessFailedCount =
                     table.Column<int>(
@@ -138,7 +141,7 @@ type initial() =
                     table.PrimaryKey("PK_AspNetUsers", (fun x -> (x.Id) :> obj)
                     ) |> ignore
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetRoleClaims"
@@ -148,22 +151,22 @@ type initial() =
                     table.Column<int>(
                         nullable = false
                         ,``type`` = "int"
-                    ).Annotation("SqlServer:Identity", "1, 1")
+                    ).Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 RoleId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ClaimType =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ClaimValue =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
@@ -178,7 +181,7 @@ type initial() =
                         ) |> ignore
 
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetUserClaims"
@@ -188,22 +191,22 @@ type initial() =
                     table.Column<int>(
                         nullable = false
                         ,``type`` = "int"
-                    ).Annotation("SqlServer:Identity", "1, 1")
+                    ).Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 UserId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ClaimType =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ClaimValue =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
@@ -218,7 +221,7 @@ type initial() =
                         ) |> ignore
 
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetUserLogins"
@@ -227,23 +230,23 @@ type initial() =
                 LoginProvider =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ProviderKey =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 ProviderDisplayName =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 UserId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
@@ -258,7 +261,7 @@ type initial() =
                         ) |> ignore
 
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetUserRoles"
@@ -267,13 +270,13 @@ type initial() =
                 UserId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 RoleId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
@@ -296,7 +299,7 @@ type initial() =
                         ) |> ignore
 
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateTable(
             name = "AspNetUserTokens"
@@ -305,23 +308,23 @@ type initial() =
                 UserId =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 LoginProvider =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 Name =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(450)"
-                    )
+                        ,``type`` = "varchar(255)"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
                 Value =
                     table.Column<string>(
                         nullable = false
-                        ,``type`` = "nvarchar(max)"
-                    )
+                        ,``type`` = "longtext"
+                    ).Annotation("MySql:CharSet", "utf8mb4")
             |})
             , constraints =
                 (fun table -> 
@@ -336,7 +339,7 @@ type initial() =
                         ) |> ignore
 
                 )
-        ) |> ignore
+        ).Annotation("MySql:CharSet", "utf8mb4") |> ignore
 
         migrationBuilder.CreateIndex(
             name = "IX_AspNetRoleClaims_RoleId"
@@ -349,7 +352,6 @@ type initial() =
             ,table = "AspNetRoles"
             ,column = "NormalizedName"
             ,unique = true
-            ,filter = "[NormalizedName] IS NOT NULL"
             ) |> ignore
 
         migrationBuilder.CreateIndex(
@@ -381,7 +383,6 @@ type initial() =
             ,table = "AspNetUsers"
             ,column = "NormalizedUserName"
             ,unique = true
-            ,filter = "[NormalizedUserName] IS NOT NULL"
             ) |> ignore
 
 
@@ -418,31 +419,31 @@ type initial() =
     override this.BuildTargetModel(modelBuilder: ModelBuilder) =
         modelBuilder
             .HasAnnotation("ProductVersion", "6.0.29")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128) |> ignore
+            .HasAnnotation("Relational:MaxIdentifierLength", 64) |> ignore
 
         modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", (fun b ->
 
             b.Property<string>("Id")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ConcurrencyStamp")
                 .IsConcurrencyToken()
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("Name")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("NormalizedName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.HasKey("Id")
@@ -451,8 +452,7 @@ type initial() =
 
             b.HasIndex("NormalizedName")
                 .IsUnique()
-                .HasDatabaseName("RoleNameIndex")
-                .HasFilter("[NormalizedName] IS NOT NULL") |> ignore
+                .HasDatabaseName("RoleNameIndex") |> ignore
 
             b.ToTable("AspNetRoles") |> ignore
 
@@ -466,21 +466,19 @@ type initial() =
                 .HasColumnType("int")
                 |> ignore
 
-            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1) |> ignore
-
             b.Property<string>("ClaimType")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("ClaimValue")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("RoleId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("Id")
@@ -498,7 +496,7 @@ type initial() =
 
             b.Property<string>("Id")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<int>("AccessFailedCount")
@@ -509,71 +507,71 @@ type initial() =
             b.Property<string>("ConcurrencyStamp")
                 .IsConcurrencyToken()
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("Email")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<bool>("EmailConfirmed")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<bool>("LockoutEnabled")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<Nullable<DateTimeOffset>>("LockoutEnd")
                 .IsRequired(false)
-                .HasColumnType("datetimeoffset")
+                .HasColumnType("datetime(6)")
                 |> ignore
 
             b.Property<string>("NormalizedEmail")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("NormalizedUserName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("PasswordHash")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("PhoneNumber")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<bool>("PhoneNumberConfirmed")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<string>("SecurityStamp")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<bool>("TwoFactorEnabled")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<string>("UserName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.HasKey("Id")
@@ -586,8 +584,7 @@ type initial() =
 
             b.HasIndex("NormalizedUserName")
                 .IsUnique()
-                .HasDatabaseName("UserNameIndex")
-                .HasFilter("[NormalizedUserName] IS NOT NULL") |> ignore
+                .HasDatabaseName("UserNameIndex") |> ignore
 
             b.ToTable("AspNetUsers") |> ignore
 
@@ -601,21 +598,19 @@ type initial() =
                 .HasColumnType("int")
                 |> ignore
 
-            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1) |> ignore
-
             b.Property<string>("ClaimType")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("ClaimValue")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("Id")
@@ -633,22 +628,22 @@ type initial() =
 
             b.Property<string>("LoginProvider")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ProviderKey")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ProviderDisplayName")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("LoginProvider", "ProviderKey")
@@ -666,12 +661,12 @@ type initial() =
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("RoleId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("UserId", "RoleId")
@@ -689,22 +684,22 @@ type initial() =
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("LoginProvider")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("Name")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("Value")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.HasKey("UserId", "LoginProvider", "Name")

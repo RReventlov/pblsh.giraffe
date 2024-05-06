@@ -13,3 +13,5 @@ let configuration =
         .AddJsonFile("appsettings.json", false)
         .AddJsonFile("appsettings.development.json", true)
         .Build()
+
+let (postRoot: string) = configuration["postRoot"]

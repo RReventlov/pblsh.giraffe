@@ -21,16 +21,17 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
         <PackageReference Include="SQLProvider" Version="1.3.36" />
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="Types.fs" />
         <Compile Include="Paths.fs" />
         <Compile Include="Configuration.fs" />
-        <Compile Include="Types.fs" />
-        <Compile Include="Migrations/*.fs" />
         <Compile Include="Models.fs" />
         <Compile Include="DataAccess.fs" />
+        <Compile Include="Migrations/*.fs" />
         <Compile Include="Workflows.fs" />
         <Compile Include="Urls.fs" />
         <Compile Include="Components.fs" />
@@ -40,8 +41,8 @@
     </ItemGroup>
 
     <ItemGroup> 
-        <Content Include="appsettings.development.json" /> 
         <Content Include="appsettings.json" />
+        <Content Include="appsettings.development.json" />
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest"/>
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

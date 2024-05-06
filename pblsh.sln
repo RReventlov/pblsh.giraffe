@@ -2,6 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "pblsh.giraffe", "pblsh.giraffe\pblsh.giraffe.fsproj", "{1171CE18-2503-4F8B-BE7D-1BA000E1FF27}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pblsh", "pblsh", "{410E5AD5-B96A-4029-A887-2F00227F2D53}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

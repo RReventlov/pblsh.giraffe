@@ -7,40 +7,40 @@ open Microsoft.EntityFrameworkCore.Infrastructure
 open Microsoft.EntityFrameworkCore.Metadata
 open Microsoft.EntityFrameworkCore.Migrations
 open Microsoft.EntityFrameworkCore.Storage.ValueConversion
-open pblsh.giraffe
+open pblsh
 
-[<DbContext(typeof<Identity.ApplicationDbContext>)>]
+[<DbContext(typeof<DataAccess.ApplicationDbContext>)>]
 type ApplicationDbContextModelSnapshot() =
     inherit ModelSnapshot()
 
     override this.BuildModel(modelBuilder: ModelBuilder) =
         modelBuilder
             .HasAnnotation("ProductVersion", "6.0.29")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128) |> ignore
+            .HasAnnotation("Relational:MaxIdentifierLength", 64) |> ignore
 
         modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", (fun b ->
 
             b.Property<string>("Id")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ConcurrencyStamp")
                 .IsConcurrencyToken()
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("Name")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("NormalizedName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.HasKey("Id")
@@ -49,8 +49,7 @@ type ApplicationDbContextModelSnapshot() =
 
             b.HasIndex("NormalizedName")
                 .IsUnique()
-                .HasDatabaseName("RoleNameIndex")
-                .HasFilter("[NormalizedName] IS NOT NULL") |> ignore
+                .HasDatabaseName("RoleNameIndex") |> ignore
 
             b.ToTable("AspNetRoles") |> ignore
 
@@ -64,21 +63,19 @@ type ApplicationDbContextModelSnapshot() =
                 .HasColumnType("int")
                 |> ignore
 
-            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1) |> ignore
-
             b.Property<string>("ClaimType")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("ClaimValue")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("RoleId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("Id")
@@ -96,7 +93,7 @@ type ApplicationDbContextModelSnapshot() =
 
             b.Property<string>("Id")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<int>("AccessFailedCount")
@@ -107,71 +104,71 @@ type ApplicationDbContextModelSnapshot() =
             b.Property<string>("ConcurrencyStamp")
                 .IsConcurrencyToken()
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("Email")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<bool>("EmailConfirmed")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<bool>("LockoutEnabled")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<Nullable<DateTimeOffset>>("LockoutEnd")
                 .IsRequired(false)
-                .HasColumnType("datetimeoffset")
+                .HasColumnType("datetime(6)")
                 |> ignore
 
             b.Property<string>("NormalizedEmail")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("NormalizedUserName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.Property<string>("PasswordHash")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("PhoneNumber")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<bool>("PhoneNumberConfirmed")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<string>("SecurityStamp")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<bool>("TwoFactorEnabled")
                 .IsRequired(true)
-                .HasColumnType("bit")
+                .HasColumnType("tinyint(1)")
                 |> ignore
 
             b.Property<string>("UserName")
                 .IsRequired(true)
                 .HasMaxLength(256)
-                .HasColumnType("nvarchar(256)")
+                .HasColumnType("varchar(256)")
                 |> ignore
 
             b.HasKey("Id")
@@ -184,8 +181,7 @@ type ApplicationDbContextModelSnapshot() =
 
             b.HasIndex("NormalizedUserName")
                 .IsUnique()
-                .HasDatabaseName("UserNameIndex")
-                .HasFilter("[NormalizedUserName] IS NOT NULL") |> ignore
+                .HasDatabaseName("UserNameIndex") |> ignore
 
             b.ToTable("AspNetUsers") |> ignore
 
@@ -199,21 +195,19 @@ type ApplicationDbContextModelSnapshot() =
                 .HasColumnType("int")
                 |> ignore
 
-            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1) |> ignore
-
             b.Property<string>("ClaimType")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("ClaimValue")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("Id")
@@ -231,22 +225,22 @@ type ApplicationDbContextModelSnapshot() =
 
             b.Property<string>("LoginProvider")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ProviderKey")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("ProviderDisplayName")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("LoginProvider", "ProviderKey")
@@ -264,12 +258,12 @@ type ApplicationDbContextModelSnapshot() =
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("RoleId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.HasKey("UserId", "RoleId")
@@ -287,22 +281,22 @@ type ApplicationDbContextModelSnapshot() =
 
             b.Property<string>("UserId")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("LoginProvider")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("Name")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("varchar(255)")
                 |> ignore
 
             b.Property<string>("Value")
                 .IsRequired(true)
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("longtext")
                 |> ignore
 
             b.HasKey("UserId", "LoginProvider", "Name")

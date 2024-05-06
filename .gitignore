@@ -4,4 +4,4 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.idea/
-appsettings.development.json
+pblsh.giraffe/appsettings.development.json

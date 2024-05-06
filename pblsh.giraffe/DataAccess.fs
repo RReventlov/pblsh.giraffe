@@ -1,48 +1,33 @@
 module pblsh.DataAccess
 
-open System
-open System.ComponentModel.DataAnnotations
-open System.ComponentModel.DataAnnotations.Schema
-open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Identity.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Design
-open EntityFrameworkCore.FSharp.Extensions
+open FSharp.Data.Sql
 open pblsh.Configuration
-
-module Dtos =
-
-    [<CLIMutable>]
-    type PostDto =
-        { [<Key>]
-          Id: Guid
-          Author: IdentityUser
-          Title: string
-          Dots: List<string>
-          PublishedOn: DateTime
-          UniqueViews: int }
 
 type ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>) =
     inherit IdentityDbContext(options)
-
-    [<DefaultValue>]
-    val mutable posts: DbSet<Dtos.PostDto>
-
-    member this.Posts
-        with get () = this.posts
-        and set v = this.posts <- v
-
-    override _.OnModelCreating builder =
-        builder.RegisterOptionTypes()
-        
-        base.OnModelCreating builder
-
-    override _.OnConfiguring(options: DbContextOptionsBuilder) =
-        options.UseSqlServer(configuration["connectionString"]) |> ignore
 
 type ApplicationDbContextFactory() =
     interface IDesignTimeDbContextFactory<ApplicationDbContext> with
         member _.CreateDbContext(args: string[]) =
             let optionsBuilder = DbContextOptionsBuilder<ApplicationDbContext>()
-            optionsBuilder.UseSqlServer(configuration["connectionString"]) |> ignore
+            let connectionString = configuration["connectionString"]
+
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            |> ignore
+
             new ApplicationDbContext(optionsBuilder.Options)
+
+
+[<Literal>]
+let dbVendor = Common.DatabaseProviderTypes.MYSQL
+
+[<Literal>]
+let useOptions = Common.NullableColumnType.OPTION
+
+type sql =
+    SqlDataProvider<dbVendor, "server=localhost;port=3307;database=pblsh;user=root;password=root;", UseOptionTypes=useOptions>
+
+let ctx = sql.GetDataContext ()

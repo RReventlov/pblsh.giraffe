@@ -6,6 +6,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
+open pblsh.Models.Post
 open pblsh.Paths
 open pblsh.Models
 open pblsh.Models.Forms
@@ -53,7 +54,7 @@ let postLogin (loginInfo: LoginInfo) : HttpHandler =
                     | Ok r -> redirectTo true r.ReturnUrl next ctx
                     | Error _ -> redirectTo true "/account/me" next ctx
             else
-                return! text (ctx.GetRequestUrl()) next ctx
+                return! text "An error occurred during login" next ctx
         }
 
 let getSignup () =
@@ -104,11 +105,22 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
     fun next ctx ->
         task {
             let! form = getForm ctx
-            let authorId = Guid.NewGuid ()
-            let dots = []
             
+            let userManager = ctx.GetService<UserManager<IdentityUser>>()
+            let authorId = userManager.GetUserId(ctx.User)
+            let dots = newPostInfo.Dots.Split(".") |> List.ofArray
+            let user = getUser ctx
+
             return!
                 match Posts.saveNewPost authorId newPostInfo.Title dots form.Files with
                 | Happy h -> redirectTo true (sprintf "/post/%s" (h.Id.ToString())) next ctx
-                | Sad s -> htmlView (Views.errorWithRedirect "") next ctx
+                | Sad s ->
+                    let errors =
+                        s
+                        |> List.collect (fun x ->
+                            match x with
+                            | DotTooShort msg -> msg
+                            | TitleTooShort -> [ "The title is too short" ])
+
+                    htmlView (Views.newPost user errors) next ctx
         }
