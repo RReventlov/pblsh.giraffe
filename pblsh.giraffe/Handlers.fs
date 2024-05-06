@@ -3,6 +3,7 @@
 open System
 open System.Threading
 open Giraffe
+open Giraffe.ViewEngine
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
@@ -35,6 +36,16 @@ let getIndex () : HttpHandler =
         let view = Views.index (getUserOption ctx)
         htmlView view next ctx
 
+let postSearch (content: SearchContent) : HttpHandler =
+    fun next ctx ->
+        let queryResult =
+            match Parser.Query.parse content with
+            | Error e -> e
+            | Ok o -> "parsing succeeded"
+        let results = ["";" "]   
+        let view = Views.search (getUserOption ctx) content.Query results   
+        htmlView view next ctx
+  
 let getLogin () : HttpHandler =
     fun next ctx ->
         let redirectAfterLogin = ctx.TryBindQueryString<RedirectInfo>() |> Result.toOption
