@@ -1,10 +1,15 @@
 module pblsh.DataAccess
 
 open Microsoft.AspNetCore.Identity.EntityFrameworkCore
+open Microsoft.Data.SqlClient
+open Microsoft.Data.Sqlite
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Design
-open FSharp.Data.Sql
+open SqlHydra.Query
 open pblsh.Configuration
+open pblsh.Hydra
+open pblsh.Hydra.main
+
 
 type ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>) =
     inherit IdentityDbContext(options)
@@ -14,7 +19,12 @@ type ApplicationDbContextFactory() =
         member _.CreateDbContext(args: string[]) =
             let optionsBuilder = DbContextOptionsBuilder<ApplicationDbContext>()
 
-            optionsBuilder.UseSqlite(connectionString)
-            |> ignore
+            optionsBuilder.UseSqlite(connectionString) |> ignore
 
             new ApplicationDbContext(optionsBuilder.Options)
+
+let createDbx () =
+    let compiler = SqlKata.Compilers.SqliteCompiler()
+    let connection = new SqliteConnection(connectionString)
+    connection.Open()
+    new QueryContext(connection, compiler)
