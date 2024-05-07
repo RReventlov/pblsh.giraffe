@@ -1,14 +1,18 @@
 ﻿module pblsh.Handlers
 
+open System
 open System.Threading
 open Giraffe
 open Giraffe.ViewEngine
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
+open pblsh.Models.Post
+open pblsh.Paths
 open pblsh.Models
 open pblsh.Models.Forms
 open pblsh.Models.QueryStrings
+open pblsh.Workflows
 
 let getForm (ctx: HttpContext) =
     task {
@@ -31,16 +35,6 @@ let getIndex () : HttpHandler =
     fun next ctx ->
         let view = Views.index (getUserOption ctx)
         htmlView view next ctx
-
-let postSearch (content: SearchContent) : HttpHandler =
-    fun next ctx ->
-        let queryResult =
-            match Parser.Query.parse content with
-            | Error e -> e
-            | Ok o -> "parsing succeeded"
-        let results = ["";" "]   
-        let view = Views.search (getUserOption ctx) content.Query results   
-        htmlView view next ctx
   
 let getLogin () : HttpHandler =
     fun next ctx ->
@@ -61,7 +55,7 @@ let postLogin (loginInfo: LoginInfo) : HttpHandler =
                     | Ok r -> redirectTo true r.ReturnUrl next ctx
                     | Error _ -> redirectTo true "/account/me" next ctx
             else
-                return! text (ctx.GetRequestUrl()) next ctx
+                return! text "An error occurred during login" next ctx
         }
 
 let getSignup () =
@@ -112,15 +106,22 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
     fun next ctx ->
         task {
             let! form = getForm ctx
-            let files = form.Files |> Seq.fold (fun a s -> sprintf "%s\n%s" a s.FileName) ""
+            
+            let userManager = ctx.GetService<UserManager<IdentityUser>>()
+            let authorId = userManager.GetUserId(ctx.User)
+            let dots = newPostInfo.Dots.Split(".") |> List.ofArray
+            let user = getUser ctx
 
             return!
-                htmlView
-                    (Giraffe.ViewEngine.HtmlElements.p
-                        []
-                        [ Giraffe.ViewEngine.HtmlElements.encodedText (
-                              sprintf "%s\n\nFiles:%s" (newPostInfo.ToString()) files
-                          ) ])
-                    next
-                    ctx
+                match Posts.saveNewPost authorId newPostInfo.Title dots form.Files with
+                | Happy h -> redirectTo true (sprintf "/post/%s" (h.Id.ToString())) next ctx
+                | Sad s ->
+                    let errors =
+                        s
+                        |> List.collect (fun x ->
+                            match x with
+                            | DotTooShort msg -> msg
+                            | TitleTooShort -> [ "The title is too short" ])
+
+                    htmlView (Views.newPost user errors) next ctx
         }

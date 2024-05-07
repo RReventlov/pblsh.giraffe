@@ -10,7 +10,7 @@ open pblsh.Models.QueryStrings
 let randomPostCard _ =
     div
         [ _class "postcard" ]
-        [ h2 [] [ a [ _href "posts/post-id" ] [ encodedText "How to build a medium Medium-Clone" ] ]
+        [ h2 [] [ a [ _href "/posts/post-id" ] [ encodedText "How to build a medium Medium-Clone" ] ]
           div
               []
               [ encodedText
@@ -99,10 +99,11 @@ let newPost userInfo (errors: string list) =
       navigation
           [ { Text = "Home"; Link = "/index" }
             { Text = "New Post"
-              Link = "/post/new" } ]
+              Link = Urls.newPost } ]
       main
           []
-          [ form
+          [ div [] (errors |> List.map (fun e -> p [ _class "error" ] [ encodedText e ]))
+            form
                 [ _action "new"; _method "post"; _enctype "multipart/form-data" ]
                 [ label [ _for "title" ] [ encodedText "Title" ]
                   input [ _id "title"; _type "text"; _name "title" ]
@@ -118,7 +119,9 @@ let newPost userInfo (errors: string list) =
                   div
                       []
                       [ encodedText "Supplied files should follow the "
-                        a [ _href "https://commonmark.org/"; _target "_blank"; _class "web-link" ] [ encodedText "CommonMark" ]
+                        a
+                            [ _href "https://commonmark.org/"; _target "_blank"; _class "web-link" ]
+                            [ encodedText "CommonMark" ]
                         encodedText " standard to ensure they are rendered correctly." ]
                   input [ _id "file"; _type "file"; _name "file"; _accept ".md" ]
                   div

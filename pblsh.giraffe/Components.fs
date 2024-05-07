@@ -47,13 +47,15 @@ let accountTopRow (userInfo: UserInfo option) =
         ]
         [ match userInfo with
           | Some u ->
-              a [ _id "newpost"; _class "action"; _href "/post/new" ] [ encodedText "New post" ]
+              a [ _id "newpost"; _class "action"; _href Urls.newPost ] [ encodedText "New post" ]
               a [ _id "account"; _class "filled-action"; _href "/account/me" ] [ encodedText u.UserName ]      
           | None ->
               a [ _id "login"; _class "action"; _href "/account/login" ] [ encodedText "Log in" ]
               a [ _id "signup"; _class "filled-action"; _href "/account/signup" ] [ encodedText "Sign up" ] ]
 
 let emptyTopRow () = topRow [] []
+
+type RoutePart = { Text: string; Link: string }
 
 let private routeElement (routePart: RoutePart) =
     div
