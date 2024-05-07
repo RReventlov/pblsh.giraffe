@@ -1,36 +1,40 @@
 module pblsh.Workflows
 
+open System
 open System.IO
 open Microsoft.AspNetCore.Http
-open pblsh.Types
+open SqlHydra.Query
+open pblsh.Hydra
+open pblsh.Hydra.main
 open pblsh.Paths
 open pblsh.Configuration
 open pblsh.Models
 open pblsh.DataAccess
+open pblsh.Types
 
 module Posts =
 
     let postDir post = sprintf "%s/%O" postRoot post.Id
 
-    let persistPost post (files: IFormFileCollection) =
-        let ctx = sql.GetDataContext()
-        let posts = ctx.Pblsh.Posts
-        let row = posts.Create()
-        row.Id <- post.Id.ToString()
-        row.Author <- post.Author
-        row.Title <- (String5.value post.Title)
-        row.PublishedOn <- post.PublishedOn
-        row.UniqueViews <- (Int0.value post.UniqueViews)
-        ctx.SubmitUpdates()
-        
-        let target = Directory.CreateDirectory(postDir post)
-
+    let persistPost (post: Post) (files: IFormFileCollection) =
+        let insertedRows =
+            insertTask createDbx {
+                into posts
+                entity {
+                    posts.Id = post.Id.ToString()
+                    posts.Author = post.Author
+                    posts.Title = String5.value post.Title
+                    posts.PublishedOn = DateOnly.FromDateTime post.PublishedOn 
+                }
+            }
+        insertedRows.Result |> ignore
+        let contentRoot = sprintf "%s/%s" postRoot (post.Id.ToString())
+        Directory.CreateDirectory contentRoot |> ignore
         for file in files do
-            let path = sprintf "%s/%s" target.FullName "my-file.txt"
-            let fs = File.Open(path, FileMode.OpenOrCreate)
-            file.CopyTo(fs)
+            let fs = File.Create((sprintf "%s/%s" contentRoot file.FileName))
+            file.CopyTo fs
             fs.Dispose()
-
+            
 
     let saveNewPost author title dots files =
         path {

@@ -14,4 +14,6 @@ let configuration =
         .AddJsonFile("appsettings.development.json", true)
         .Build()
 
-let (postRoot: string) = configuration["postRoot"]
+let postRoot = configuration["postRoot"]
+
+let connectionString = configuration["connectionString"]
