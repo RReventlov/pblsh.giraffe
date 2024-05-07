@@ -92,9 +92,8 @@ let configureServices (configuration: IConfiguration) (services: IServiceCollect
             o.LowercaseQueryStrings <- true)
     |> ignore
 
-    let connectionString = configuration["connectionString"]
     services
-        .AddDbContext<ApplicationDbContext>(fun o -> o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)) |> ignore)
+        .AddDbContext<ApplicationDbContext>(fun o -> o.UseSqlite(connectionString) |> ignore)
         .AddDefaultIdentity<IdentityUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
     |> ignore

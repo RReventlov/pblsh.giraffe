@@ -1,55 +1,55 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <AssemblyName>pblsh.giraffe.App</AssemblyName>
-        <EnableDefaultContentItems>false</EnableDefaultContentItems>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
-        <PackageReference Include="Giraffe" Version="6.0.0"/>
-        <PackageReference Include="Giraffe.ViewEngine" Version="1.3.*"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.29" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.29" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.29">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.29" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.29">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
-        <PackageReference Include="SQLProvider" Version="1.3.36" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Include="Types.fs" />
-        <Compile Include="Paths.fs" />
-        <Compile Include="Configuration.fs" />
-        <Compile Include="Models.fs" />
-        <Compile Include="DataAccess.fs" />
-        <Compile Include="Migrations/*.fs" />
-        <Compile Include="Workflows.fs" />
-        <Compile Include="Urls.fs" />
-        <Compile Include="Components.fs" />
-        <Compile Include="Views.fs" />
-        <Compile Include="Handlers.fs" />
-        <Compile Include="Program.fs"/>
-    </ItemGroup>
-
-    <ItemGroup> 
-        <Content Include="appsettings.json" />
-        <Content Include="appsettings.development.json" />
-        <None Include="web.config" CopyToOutputDirectory="PreserveNewest"/>
-        <Content Include="WebRoot\**\*">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <AssemblyName>pblsh.giraffe.App</AssemblyName>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
+    <PackageReference Include="Giraffe" Version="6.0.0" />
+    <PackageReference Include="Giraffe.ViewEngine" Version="1.3.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.29" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.29" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.29">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.29" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.29" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.29">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
+    <PackageReference Include="SqlHydra.Query" Version="2.4.1" />
+    <PackageReference Include="SQLProvider" Version="1.3.36" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Hydra.fs">
+      <Visible>False</Visible>
+    </Compile>
+    <Compile Include="Types.fs" />
+    <Compile Include="Paths.fs" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="Models.fs" />
+    <Compile Include="DataAccess.fs" />
+    <Compile Include="Migrations/*.fs" />
+    <Compile Include="Workflows.fs" />
+    <Compile Include="Urls.fs" />
+    <Compile Include="Components.fs" />
+    <Compile Include="Views.fs" />
+    <Compile Include="Handlers.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json" />
+    <Content Include="appsettings.development.json" />
+    <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="WebRoot\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
 </Project>
