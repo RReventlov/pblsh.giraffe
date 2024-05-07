@@ -18,8 +18,6 @@ module Forms =
     [<CLIMutable>]
     type NewPostInfo = { Title: string; Dots: string }
 
-open Forms
-
 module QueryStrings =
 
     [<CLIMutable>]

@@ -35,16 +35,6 @@ let getIndex () : HttpHandler =
     fun next ctx ->
         let view = Views.index (getUserOption ctx)
         htmlView view next ctx
-
-let postSearch (content: SearchContent) : HttpHandler =
-    fun next ctx ->
-        let queryResult =
-            match Parser.Query.parse content with
-            | Error e -> e
-            | Ok o -> "parsing succeeded"
-        let results = ["";" "]   
-        let view = Views.search (getUserOption ctx) content.Query results   
-        htmlView view next ctx
   
 let getLogin () : HttpHandler =
     fun next ctx ->
