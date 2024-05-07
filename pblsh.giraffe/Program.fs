@@ -29,7 +29,6 @@ let authenticatedRoute path =
 let webApp =
     choose
         [ route "/" >=> redirectTo true "/index"
-          routeCi "/search" >=> POST >=> tryBindForm<SearchContent> parsingError None Handlers.postSearch
           route "/index" >=> Handlers.getIndex ()
           routeCix "/account/login(.*)"
           >=> choose
