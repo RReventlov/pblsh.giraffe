@@ -30,6 +30,7 @@ let webApp =
     choose
         [ route "/" >=> redirectTo true "/index"
           route "/index" >=> Handlers.getIndex ()
+          routef "/posts/%O" Handlers.getPost
           routeCix "/account/login(.*)"
           >=> choose
                   [ GET >=> Handlers.getLogin ()
@@ -38,7 +39,6 @@ let webApp =
           >=> choose
                   [ GET >=> Handlers.getSignup ()
                     POST >=> tryBindForm<UncheckedSignUpInfo> parsingError None Handlers.postSignup ]
-
           subRoute
               "/account"
               (requiresAuthentication (challenge authScheme)

@@ -1,5 +1,6 @@
 ﻿module pblsh.Handlers
 
+open System
 open System.Threading
 open Giraffe
 open Microsoft.AspNetCore.Http.Features
@@ -35,7 +36,7 @@ let getIndex () : HttpHandler =
         let topPosts = Posts.getTop 10 |> await
         let view = Views.index (getUserOption ctx) topPosts
         htmlView view next ctx
-  
+
 let getLogin () : HttpHandler =
     fun next ctx ->
         let redirectAfterLogin = ctx.TryBindQueryString<RedirectInfo>() |> Result.toOption
@@ -106,7 +107,7 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
     fun next ctx ->
         task {
             let! form = getForm ctx
-            
+
             let userManager = ctx.GetService<UserManager<IdentityUser>>()
             let authorId = userManager.GetUserId(ctx.User)
             let dots = newPostInfo.Dots.Split(".") |> List.ofArray
@@ -125,3 +126,16 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
 
                     htmlView (Views.newPost user errors) next ctx
         }
+
+let getPost (id: Guid) : HttpHandler =
+    fun next ctx ->
+        let post = Posts.getPost id |> await
+        let user = getUserOption ctx
+
+        match post with
+        | Happy postInfo ->
+            let content = Posts.getContent postInfo
+            match content with
+            | Happy content -> htmlView (Views.post user postInfo content) next ctx
+            | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
+        | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx

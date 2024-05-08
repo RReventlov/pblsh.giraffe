@@ -68,22 +68,22 @@ let navigation (route: RoutePart list) =
 
 let dot dot =
     a
-        [ _class "tag"; _href (sprintf "/dots/%s" (String1.value dot)) ]
+        [ _class "dot"; _href (sprintf "/dots/%s" (String1.value dot)) ]
         [ encodedText (sprintf ".%s" (String1.value dot)) ]
 
-let postCard postInformation =
+let postCard postInfo =
     div
         [ _class "postcard" ]
         [ h2
               []
               [ a
-                    [ _href (sprintf "/posts/%s" (postInformation.Id.ToString())) ]
-                    [ encodedText (String1.value postInformation.Title) ] ]
+                    [ _href (Urls.postUrl postInfo) ]
+                    [ encodedText (String1.value postInfo.Title) ] ]
           div
               []
               [ span [] [ encodedText "Written by " ]
-                a [ _href "#"; _class "postcard-author" ] [ encodedText (String1.value postInformation.Author) ] ]
-          div [ _class "postcard-tags" ] [ yield! postInformation.Dots |> List.map dot ] ]
+                a [ _href "#"; _class "postcard-author" ] [ encodedText (String1.value postInfo.Author) ] ]
+          div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
 
 let dialogCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     [ emptyTopRow (); main [ _class "shiny" ] [ div [ _id "center" ] content ] ]

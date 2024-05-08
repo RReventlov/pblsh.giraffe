@@ -5,6 +5,7 @@ open Giraffe.ViewEngine.HtmlElements
 open pblsh.Components
 open pblsh.Models
 open pblsh.Models.QueryStrings
+open pblsh.Types
 
 let index (userInfo: UserInfo option) (posts: PostInformation list) =
     [ accountTopRow userInfo
@@ -112,6 +113,26 @@ let newPost userInfo (errors: string list) =
                       [ input [ _type "submit"; _value "Publish post"; _class "filled-action excited" ]
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"
+
+let post userInfo postInfo content =
+    [ accountTopRow userInfo
+      navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = String1.value postInfo.Author
+              Link = Urls.userUrl postInfo }
+            { Text = String1.value postInfo.Title
+              Link = Urls.postUrl postInfo } ]
+      main
+          []
+          [ h1 [ _id "title" ] [ encodedText (String1.value postInfo.Title) ]
+            div
+                [ _id "author" ]
+                [ encodedText "Written by "
+                  a [ _id "author-url"; _href (Urls.userUrl postInfo) ] [ encodedText (String1.value postInfo.Author) ] ]
+            div [ _id "dot-list" ] (postInfo.Dots |> List.map dot)
+            div [] [ rawText content ] ] ]
+    |> titledLayoutCss [ "pblsh.css"; "post.css" ] (String1.value postInfo.Title)
+
 
 let search (userInfo: UserInfo option) (query: string) (results: string list) =
     [ accountTopRow userInfo

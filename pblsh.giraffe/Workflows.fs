@@ -54,10 +54,8 @@ module Posts =
             .Result
         |> List.ofSeq
 
-    let createPostInformation ((id, title, author): string * string * string) =
-        let dots = dotsFor id
-        PostInformation.create id author title dots
-
+    let createPostInformation ((id, author, authorId, title): string * string * string * string) =
+        PostInformation.create id author authorId title (dotsFor id)
 
     let getTop n =
         task {
@@ -65,7 +63,7 @@ module Posts =
                 selectTask HydraReader.Read createDbx {
                     for p in posts do
                         join u in AspNetUsers on (p.Author = u.Id)
-                        select (p.Id, p.Title, u.UserName)
+                        select (p.Id, u.UserName, u.Id, p.Title)
                         take n
                 }
 
@@ -78,3 +76,38 @@ module Posts =
                     | _ -> None)
                 |> List.ofSeq
         }
+
+    type GetPostError =
+        | PostNotFound
+        | PostCouldNotBeCreated
+    
+    let getPost id =
+        let idString = id.ToString()
+        task {
+            let! opt =
+                selectTask HydraReader.Read createDbx {
+                    for p in posts do
+                        join u in AspNetUsers on (p.Author = u.Id)
+                        where (p.Id = idString)
+                        select (p.Id, u.UserName, u.Id, p.Title)
+                        tryHead
+                }
+            
+            return
+                match opt with
+                | Some (id, author, authorId, title) ->
+                    match PostInformation.create id author authorId title (dotsFor idString) with
+                    | Happy pi -> Happy pi
+                    | Sad _ -> Sad(PostCouldNotBeCreated)
+                | None -> Sad(PostNotFound)
+        }
+    
+    let getContent id =
+        let dir = postDir id
+        
+        if DirectoryInfo(dir).Exists then
+            match DirectoryInfo(dir).GetFiles() |> Array.tryHead with
+            | Some file -> Happy(File.ReadAllText(file.FullName))
+            | None -> Sad "couldn't read file"
+        else
+            Sad "couldn't find file"

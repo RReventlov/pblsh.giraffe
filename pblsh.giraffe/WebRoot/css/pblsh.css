@@ -151,3 +151,8 @@ button:hover {
 input[type=file]:hover {
     cursor: pointer;
 }
+
+.dot {
+    font-weight: bold;
+    color: var(--action-color);
+}
