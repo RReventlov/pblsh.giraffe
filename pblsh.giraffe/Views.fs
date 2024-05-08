@@ -6,27 +6,10 @@ open pblsh.Components
 open pblsh.Models
 open pblsh.Models.QueryStrings
 
-
-let randomPostCard _ =
-    div
-        [ _class "postcard" ]
-        [ h2 [] [ a [ _href "/posts/post-id" ] [ encodedText "How to build a medium Medium-Clone" ] ]
-          div
-              []
-              [ encodedText
-                    "Follow us on our journey to build a cheap medium clone with a bit of reddit and a dot of patreon" ]
-          div
-              []
-              [ span [] [ encodedText "Written by " ]
-                a [ _href "#"; _class "postcard-author" ] [ encodedText "pblsh.dev" ] ]
-          div [ _class "postcard-tags" ] [ yield! [ "blog"; "programming" ] |> List.map dot ] ]
-
-let index (userInfo: UserInfo option) =
-    let elements = List.ofSeq { 1..10 }
-
+let index (userInfo: UserInfo option) (posts: PostInformation list) =
     [ accountTopRow userInfo
       navigation [ { Text = "Home"; Link = "/index" } ]
-      main [] [ div [] (elements |> List.map randomPostCard) ] ]
+      main [] [ div [] (posts |> List.map postCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
 
 let login (redirectAfterLogin: RedirectInfo option) =
@@ -129,20 +112,26 @@ let newPost userInfo (errors: string list) =
                       [ input [ _type "submit"; _value "Publish post"; _class "filled-action excited" ]
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"
-    
+
 let search (userInfo: UserInfo option) (query: string) (results: string list) =
-    [accountTopRow userInfo
-     navigation [{ Text = "Home"; Link = "/index" }
-                 { Text = "Search"; Link = "/search" }
-                 { Text = (sprintf "\"%s\"" query); Link = "#" }]
-     main [] [
-         div [ _class "resultMetaDisplay" ] [    
-             h1 [ _class "queryDisplay" ] [ span [] [ encodedText "Search Results for \""
-                                                      span [ _class "query" ] [encodedText query]
-                                                      encodedText "\"" ]
-                                            ]
-             div [ _class "countDisplay" ] [encodedText (sprintf "%d Results found" results.Length)]
-         ]
-         div [] (results |> List.map randomPostCard) ]
-     ]
-     |> titledLayoutCss ["index.css"; "search.css"] "Search"
+    [ accountTopRow userInfo
+      navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = "Search"; Link = "/search" }
+            { Text = (sprintf "\"%s\"" query)
+              Link = "#" } ]
+      main
+          []
+          [ div
+                [ _class "resultMetaDisplay" ]
+                [ h1
+                      [ _class "queryDisplay" ]
+                      [ span
+                            []
+                            [ encodedText "Search Results for \""
+                              span [ _class "query" ] [ encodedText query ]
+                              encodedText "\"" ] ]
+                  div [ _class "countDisplay" ] [ encodedText (sprintf "%d Results found" results.Length) ] ]
+            // div [] (results |> List.map postCard)
+            ] ]
+    |> titledLayoutCss [ "index.css"; "search.css" ] "Search"

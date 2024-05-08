@@ -126,6 +126,11 @@ module main =
     let __EFMigrationsHistory = table<__EFMigrationsHistory>
 
     [<CLIMutable>]
+    type dots = { Dot: string; UsedBy: string }
+
+    let dots = table<dots>
+
+    [<CLIMutable>]
     type posts =
         { Id: string
           Title: string
@@ -277,6 +282,18 @@ module main =
             member __.ReadIfNotNull() =
                 if __.MigrationId.IsNull() then None else Some(__.Read())
 
+        type dotsReader(reader: System.Data.Common.DbDataReader, getOrdinal) =
+            member __.Dot = RequiredColumn(reader, getOrdinal, reader.GetString, "Dot")
+            member __.UsedBy = RequiredColumn(reader, getOrdinal, reader.GetString, "UsedBy")
+
+            member __.Read() =
+                { Dot = __.Dot.Read()
+                  UsedBy = __.UsedBy.Read() }
+                : dots
+
+            member __.ReadIfNotNull() =
+                if __.Dot.IsNull() then None else Some(__.Read())
+
         type postsReader(reader: System.Data.Common.DbDataReader, getOrdinal) =
             member __.Id = RequiredColumn(reader, getOrdinal, reader.GetString, "Id")
             member __.Title = RequiredColumn(reader, getOrdinal, reader.GetString, "Title")
@@ -314,6 +331,7 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
     let lazymainAspNetUserTokens = lazy (main.Readers.AspNetUserTokensReader(reader, buildGetOrdinal 4))
     let lazymainAspNetUsers = lazy (main.Readers.AspNetUsersReader(reader, buildGetOrdinal 15))
     let lazymain__EFMigrationsHistory = lazy (main.Readers.__EFMigrationsHistoryReader(reader, buildGetOrdinal 2))
+    let lazymaindots = lazy (main.Readers.dotsReader(reader, buildGetOrdinal 2))
     let lazymainposts = lazy (main.Readers.postsReader(reader, buildGetOrdinal 4))
     member __.``main.AspNetRoleClaims`` = lazymainAspNetRoleClaims.Value
     member __.``main.AspNetRoles`` = lazymainAspNetRoles.Value
@@ -323,6 +341,7 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
     member __.``main.AspNetUserTokens`` = lazymainAspNetUserTokens.Value
     member __.``main.AspNetUsers`` = lazymainAspNetUsers.Value
     member __.``main.__EFMigrationsHistory`` = lazymain__EFMigrationsHistory.Value
+    member __.``main.dots`` = lazymaindots.Value
     member __.``main.posts`` = lazymainposts.Value
     member private __.AccFieldCount with get () = accFieldCount and set (value) = accFieldCount <- value
 
@@ -344,6 +363,8 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
         | "main.AspNetUsers", true -> __.``main.AspNetUsers``.ReadIfNotNull >> box
         | "main.__EFMigrationsHistory", false -> __.``main.__EFMigrationsHistory``.Read >> box
         | "main.__EFMigrationsHistory", true -> __.``main.__EFMigrationsHistory``.ReadIfNotNull >> box
+        | "main.dots", false -> __.``main.dots``.Read >> box
+        | "main.dots", true -> __.``main.dots``.ReadIfNotNull >> box
         | "main.posts", false -> __.``main.posts``.Read >> box
         | "main.posts", true -> __.``main.posts``.ReadIfNotNull >> box
         | _ -> failwith $"Could not read type '{entity}' because no generated reader exists."

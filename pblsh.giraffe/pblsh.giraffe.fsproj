@@ -29,6 +29,7 @@
     <Compile Include="Hydra.fs">
       <Visible>False</Visible>
     </Compile>
+    <Compile Include="Helper.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Paths.fs" />
     <Compile Include="Configuration.fs" />

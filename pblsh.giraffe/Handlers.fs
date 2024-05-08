@@ -1,13 +1,12 @@
 ﻿module pblsh.Handlers
 
-open System
 open System.Threading
 open Giraffe
-open Giraffe.ViewEngine
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
 open pblsh.Models.Post
+open pblsh.Helper
 open pblsh.Paths
 open pblsh.Models
 open pblsh.Models.Forms
@@ -33,7 +32,8 @@ let setSessionRecord (ctx: HttpContext) key value =
 
 let getIndex () : HttpHandler =
     fun next ctx ->
-        let view = Views.index (getUserOption ctx)
+        let topPosts = Posts.getTop 10 |> await
+        let view = Views.index (getUserOption ctx) topPosts
         htmlView view next ctx
   
 let getLogin () : HttpHandler =

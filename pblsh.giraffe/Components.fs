@@ -3,6 +3,7 @@
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Models
+open pblsh.Types
 
 let titledLayoutCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     html
@@ -38,17 +39,16 @@ let topRow (middle: XmlNode list) (right: XmlNode list) =
 
 let accountTopRow (userInfo: UserInfo option) =
     topRow
-        [
-            form [ _action "/search"; _method "post" ] [
-                input [ _id "search"; _type "input"; _name "Query"; _placeholder "Search..." ]
-                input [ _type "submit"; _style "display:none" ]
-            ]
-            
-        ]
+        [ form
+              [ _action "/search"; _method "post" ]
+              [ input [ _id "search"; _type "input"; _name "Query"; _placeholder "Search..." ]
+                input [ _type "submit"; _style "display:none" ] ]
+
+          ]
         [ match userInfo with
           | Some u ->
               a [ _id "newpost"; _class "action"; _href Urls.newPost ] [ encodedText "New post" ]
-              a [ _id "account"; _class "filled-action"; _href "/account/me" ] [ encodedText u.UserName ]      
+              a [ _id "account"; _class "filled-action"; _href "/account/me" ] [ encodedText u.UserName ]
           | None ->
               a [ _id "login"; _class "action"; _href "/account/login" ] [ encodedText "Log in" ]
               a [ _id "signup"; _class "filled-action"; _href "/account/signup" ] [ encodedText "Sign up" ] ]
@@ -66,8 +66,24 @@ let private routeElement (routePart: RoutePart) =
 let navigation (route: RoutePart list) =
     div [ _id "navigation" ] (route |> List.map routeElement)
 
-let dot str =
-    a [ _class "tag"; _href (sprintf "/dots/%s" str) ] [ encodedText (sprintf ".%s" str) ]
+let dot dot =
+    a
+        [ _class "tag"; _href (sprintf "/dots/%s" (String1.value dot)) ]
+        [ encodedText (sprintf ".%s" (String1.value dot)) ]
+
+let postCard postInformation =
+    div
+        [ _class "postcard" ]
+        [ h2
+              []
+              [ a
+                    [ _href (sprintf "/posts/%s" (postInformation.Id.ToString())) ]
+                    [ encodedText (String1.value postInformation.Title) ] ]
+          div
+              []
+              [ span [] [ encodedText "Written by " ]
+                a [ _href "#"; _class "postcard-author" ] [ encodedText (String1.value postInformation.Author) ] ]
+          div [ _class "postcard-tags" ] [ yield! postInformation.Dots |> List.map dot ] ]
 
 let dialogCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     [ emptyTopRow (); main [ _class "shiny" ] [ div [ _id "center" ] content ] ]
