@@ -24,6 +24,8 @@ module Forms =
 
     [<CLIMutable>]
     type NewPostInfo = { Title: string; Dots: string }
+    
+    type SearchContent = { Query: string }
 
 module QueryStrings =
 
