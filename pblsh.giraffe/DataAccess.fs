@@ -1,10 +1,15 @@
 module pblsh.DataAccess
 
 open Microsoft.AspNetCore.Identity.EntityFrameworkCore
+open Microsoft.Data.SqlClient
+open Microsoft.Data.Sqlite
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Design
-open FSharp.Data.Sql
+open SqlHydra.Query
 open pblsh.Configuration
+open pblsh.Hydra
+open pblsh.Hydra.main
+
 
 type ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>) =
     inherit IdentityDbContext(options)
@@ -13,21 +18,13 @@ type ApplicationDbContextFactory() =
     interface IDesignTimeDbContextFactory<ApplicationDbContext> with
         member _.CreateDbContext(args: string[]) =
             let optionsBuilder = DbContextOptionsBuilder<ApplicationDbContext>()
-            let connectionString = configuration["connectionString"]
 
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            |> ignore
+            optionsBuilder.UseSqlite(connectionString) |> ignore
 
             new ApplicationDbContext(optionsBuilder.Options)
 
-
-[<Literal>]
-let dbVendor = Common.DatabaseProviderTypes.MYSQL
-
-[<Literal>]
-let useOptions = Common.NullableColumnType.OPTION
-
-type sql =
-    SqlDataProvider<dbVendor, "server=localhost;port=3307;database=pblsh;user=root;password=root;", UseOptionTypes=useOptions>
-
-let ctx = sql.GetDataContext ()
+let createDbx () =
+    let compiler = SqlKata.Compilers.SqliteCompiler()
+    let connection = new SqliteConnection(connectionString)
+    connection.Open()
+    new QueryContext(connection, compiler)

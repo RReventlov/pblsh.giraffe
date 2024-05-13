@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <AssemblyName>pblsh.giraffe.App</AssemblyName>
@@ -54,3 +53,4 @@
       <Folder Include="Migrations\" />
     </ItemGroup>
 </Project>
+ 

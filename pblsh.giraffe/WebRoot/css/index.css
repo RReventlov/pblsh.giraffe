@@ -28,8 +28,3 @@ main {
     flex-direction: row;
     gap: .25rem;
 }
-
-.tag {
-    font-weight: bold;
-    color: var(--action-color);
-}
