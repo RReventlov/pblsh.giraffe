@@ -36,6 +36,16 @@ let getIndex () : HttpHandler =
         let topPosts = Posts.getTop 10 |> await
         let view = Views.index (getUserOption ctx) topPosts
         htmlView view next ctx
+     
+let postSearch (query: SearchContent) : HttpHandler =
+    fun next ctx ->
+        let parserResult = Parser.Query.parse(query)
+        let results = match parserResult with
+                        | Ok p -> Search.searchPosts(p).Result
+                        | Error _ -> []
+                                     
+        let view = Views.search (getUserOption ctx) query.Query results
+        htmlView view next ctx
 
 let getLogin () : HttpHandler =
     fun next ctx ->

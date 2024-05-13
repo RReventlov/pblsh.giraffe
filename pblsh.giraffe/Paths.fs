@@ -11,6 +11,11 @@ let mapR r =
     | Ok o -> Happy o
     | Error e -> Sad e
 
+let filterHappy path =
+    match path with
+    | Happy h -> true
+    | Sad _ -> false
+
 let bind fn input =
     match input with
     | Happy s -> fn s

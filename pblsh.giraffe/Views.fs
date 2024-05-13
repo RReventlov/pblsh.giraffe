@@ -134,7 +134,7 @@ let post userInfo postInfo content =
     |> titledLayoutCss [ "pblsh.css"; "post.css" ] (String1.value postInfo.Title)
 
 
-let search (userInfo: UserInfo option) (query: string) (results: string list) =
+let search (userInfo: UserInfo option) (query: string) (results: PostInformation list) =
     [ accountTopRow userInfo
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -153,6 +153,6 @@ let search (userInfo: UserInfo option) (query: string) (results: string list) =
                               span [ _class "query" ] [ encodedText query ]
                               encodedText "\"" ] ]
                   div [ _class "countDisplay" ] [ encodedText (sprintf "%d Results found" results.Length) ] ]
-            // div [] (results |> List.map postCard)
+            div [] (results |> List.map postCard)    
             ] ]
     |> titledLayoutCss [ "index.css"; "search.css" ] "Search"

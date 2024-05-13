@@ -30,6 +30,7 @@ let webApp =
     choose
         [ route "/" >=> redirectTo true "/index"
           route "/index" >=> Handlers.getIndex ()
+          route "/search" >=> tryBindForm<SearchContent> parsingError None Handlers.postSearch 
           routef "/posts/%O" Handlers.getPost
           routeCix "/account/login(.*)"
           >=> choose
