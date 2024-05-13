@@ -1,5 +1,5 @@
 [general]
-connection = "Datasource=C:/Users/janha/OneDrive/Dokumente/Development/repos/Web_Engineering/pblsh.org/src/pblsh/pblsh.db;"
+connection = "Datasource=../pblsh.db;"
 output = "Hydra.fs"
 namespace = "pblsh.Hydra"
 cli_mutable = true
