@@ -32,6 +32,7 @@ let webApp =
           route "/index" >=> Handlers.getIndex ()
           route "/search" >=> tryBindForm<SearchContent> parsingError None Handlers.postSearch 
           routef "/posts/%O" Handlers.getPost
+          routef "/users/%O" Handlers.getUserById
           routeCix "/account/login(.*)"
           >=> choose
                   [ GET >=> Handlers.getLogin ()

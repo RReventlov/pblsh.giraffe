@@ -136,6 +136,13 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
 
                     htmlView (Views.newPost user errors) next ctx
         }
+        
+let getUserById (id: Guid) : HttpHandler =
+    fun next ctx ->
+        let user = getUserOption ctx
+        let userInfo = Users.getUser(id).Result
+        let view = Views.userView user userInfo
+        htmlView view next ctx
 
 let getPost (id: Guid) : HttpHandler =
     fun next ctx ->

@@ -138,7 +138,23 @@ module Posts =
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
-            
+    
+module Users =
+    let getUser (pId: Guid) =
+        let idStr = pId.ToString ()
+        task {
+            let! userSelectTask =
+                selectTask HydraReader.Read createDbx {
+                    for u in AspNetUsers do
+                        where (u.Id = idStr)
+                        select u.UserName
+                        tryHead
+                }
+            return
+                match userSelectTask with
+                |Some s -> {UserName = s }
+                |None -> {UserName = ""}
+        }
 module Search =
     let searchPosts (queryInfo: QueryInfo) =
         task {
