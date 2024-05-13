@@ -34,6 +34,7 @@
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Workflows.fs" />
         <Compile Include="Urls.fs" />
+        <Compile Include="Parser.fs" />
         <Compile Include="Components.fs" />
         <Compile Include="Views.fs" />
         <Compile Include="Handlers.fs" />
