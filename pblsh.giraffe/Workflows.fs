@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
+open Microsoft.FSharp.Control
 open SqlHydra.Query
 open pblsh.Hydra
 open pblsh.Hydra.main
@@ -12,6 +13,8 @@ open pblsh.Configuration
 open pblsh.Models
 open pblsh.DataAccess
 open pblsh.Types
+open pblsh.Models.Forms
+open pblsh.Helper
 
 module Posts =
 
@@ -135,3 +138,24 @@ module Posts =
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
+            
+module Search =
+    let searchPosts (queryInfo: QueryInfo) =
+        task {
+            let authorValue = (if queryInfo.Author.IsSome then queryInfo.Author.Value else "").ToUpper()
+            let! fittingPosts = selectTask HydraReader.Read createDbx {
+                    for p in posts do
+                        join u in AspNetUsers on (p.Author = u.Id)
+                        where (p.Title = queryInfo.Article && u.NormalizedUserName = authorValue)
+                        select p.Id
+                   }
+            return fittingPosts
+                   |> Seq.map (Posts.getPost >> await)
+                   |> Seq.filter filterHappy
+                   |> Seq.map(fun path ->
+                       match path with //Sad Case wont happen
+                       | Happy s -> s)
+                   |> List.ofSeq
+        }
+               
+        
