@@ -2,6 +2,7 @@ module pblsh.Workflows
 
 open System
 open System.IO
+open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
 open SqlHydra.Query
 open pblsh.Hydra
@@ -36,12 +37,35 @@ module Posts =
             let fs = File.Create((sprintf "%s/%s" contentRoot file.FileName))
             file.CopyTo fs
             fs.Dispose()
+            
+    let persistDots (newDots: string list) (postId: string) =
+        let dotsMaybe = 
+            newDots 
+            |> List.map (fun i -> 
+                {
+                    dots.Dot = i
+                    dots.UsedBy = postId 
+                }
+            )
+            |> AtLeastOne.tryCreate
 
-
+        match dotsMaybe with
+        | Some newDots ->
+            insertTask createDbx {
+                into dots
+                entities newDots
+                } :> Task
+        | None ->
+            async {
+            printfn "Skipping insert because entities seq was empty."
+            } |> Async.StartAsTask :> Task
+            
+            
     let saveNewPost author title dots files =
         path {
             let! post = Post.createNew author title dots
             persistPost post files
+            persistDots dots (post.Id.ToString()) |> ignore
             return post
         }
 
