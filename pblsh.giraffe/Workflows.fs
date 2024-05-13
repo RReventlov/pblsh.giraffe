@@ -128,6 +128,25 @@ module Posts =
                     | Sad _ -> Sad(PostCouldNotBeCreated)
                 | None -> Sad(PostNotFound)
         }
+        
+    let getPostsByAuthor (id:Guid) =
+        let idStr = id.ToString ()
+        task {
+            let! selectedArticles =
+                selectTask HydraReader.Read createDbx {
+                    for p in posts do
+                        where (p.Author = idStr)
+                        select p.Id
+                        
+                }
+            return selectedArticles
+               |> Seq.map (getPost >> await)
+               |> Seq.filter filterHappy
+               |> Seq.map(fun path ->
+                   match path with //Sad Case wont happen
+                   | Happy s -> s)
+               |> List.ofSeq
+        }
     
     let getContent id =
         let dir = postDir id
@@ -147,13 +166,13 @@ module Users =
                 selectTask HydraReader.Read createDbx {
                     for u in AspNetUsers do
                         where (u.Id = idStr)
-                        select u.UserName
+                        select (u.UserName,Guid.Parse(u.Id))
                         tryHead
                 }
             return
                 match userSelectTask with
-                |Some s -> {UserName = s }
-                |None -> {UserName = ""}
+                |Some (userName,id) -> {UserName = userName ; Id = id }
+                |None -> {UserName = ""; Id = Guid.Empty}
         }
 module Search =
     let searchPosts (queryInfo: QueryInfo) =
@@ -173,5 +192,6 @@ module Search =
                        | Happy s -> s)
                    |> List.ofSeq
         }
+        
                
         

@@ -157,7 +157,7 @@ let search (userInfo: UserInfo option) (query: string) (results: PostInformation
             ] ]
     |> titledLayoutCss [ "index.css"; "search.css" ] "Search"
     
-let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) =
+let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) (articles: PostInformation list) =
     [
         accountTopRow curUserInfo
         navigation
@@ -167,6 +167,11 @@ let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) =
           ]
         main
           []
-          [ h1 [] [ encodedText (reqUserInfo.UserName) ]
+          [
+            h1 [] [ encodedText (reqUserInfo.UserName) ]
+            div [ _class "writtenArticles"] [
+                h1 [] [encodedText "Articles written by User"]
+                div [] (articles |> List.map postCard)
+            ]
           ] 
     ] |> titledLayoutCss ["index.css"] reqUserInfo.UserName

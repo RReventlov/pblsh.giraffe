@@ -20,7 +20,7 @@ let getForm (ctx: HttpContext) =
         return! formFeature.ReadFormAsync CancellationToken.None
     }
 
-let getUser (ctx: HttpContext) = { UserName = ctx.User.Identity.Name }
+let getUser (ctx: HttpContext) = { UserName = ctx.User.Identity.Name; Id = Guid.Empty }
 
 let getUserOption (ctx: HttpContext) =
     if ctx.User.Identity.IsAuthenticated then
@@ -141,7 +141,8 @@ let getUserById (id: Guid) : HttpHandler =
     fun next ctx ->
         let user = getUserOption ctx
         let userInfo = Users.getUser(id).Result
-        let view = Views.userView user userInfo
+        let articles = Posts.getPostsByAuthor(id).Result
+        let view = Views.userView user userInfo articles
         htmlView view next ctx
 
 let getPost (id: Guid) : HttpHandler =

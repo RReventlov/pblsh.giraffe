@@ -40,7 +40,11 @@ module QueryStrings =
     type RedirectInfo = { ReturnUrl: string }
 
 
-type UserInfo = { UserName: string }
+type UserInfo =
+    {
+        UserName: string
+        Id: Guid
+    }
 
 type Dot = String1
 
