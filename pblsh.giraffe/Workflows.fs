@@ -130,7 +130,7 @@ module Posts =
         }
         
     let getPostsByAuthor (id:Guid) =
-        let idStr = id.ToString ()
+        let idStr = id.ToString()
         task {
             let! selectedArticles =
                 selectTask HydraReader.Read createDbx {
@@ -166,12 +166,12 @@ module Users =
                 selectTask HydraReader.Read createDbx {
                     for u in AspNetUsers do
                         where (u.Id = idStr)
-                        select (u.UserName,Guid.Parse(u.Id))
+                        select (u.UserName,u.Id)
                         tryHead
                 }
             return
                 match userSelectTask with
-                |Some (userName,id) -> {UserName = userName ; Id = id }
+                |Some (userName,id) -> {UserName = userName ; Id = Guid.Parse(id) }
                 |None -> {UserName = ""; Id = Guid.Empty}
         }
 module Search =

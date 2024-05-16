@@ -6,6 +6,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
+open pblsh.Hydra.main
 open pblsh.Models.Post
 open pblsh.Helper
 open pblsh.Paths
