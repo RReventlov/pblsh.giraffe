@@ -147,6 +147,24 @@ module Posts =
                    | Happy s -> s)
                |> List.ofSeq
         }
+    
+    let getPostsByDot (dot:string) =
+        task {
+            let! selectedArticles =
+                selectTask HydraReader.Read createDbx {
+                    for d in dots do
+                        join p in posts on (d.UsedBy = p.Id)
+                        where (d.Dot = dot)
+                        select p.Id
+                }
+            return selectedArticles
+               |> Seq.map (getPost >> await)
+               |> Seq.filter filterHappy
+               |> Seq.map(fun path ->
+                   match path with //Sad Case wont happen
+                   | Happy s -> s)
+               |> List.ofSeq
+        }
         
     let getContent id =
         let dir = postDir id
