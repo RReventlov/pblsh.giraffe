@@ -66,7 +66,7 @@ let signUpComplete () =
             ] ]
     |> dialog "pblsh.confirm"
 
-let me userInfo =
+let me (userInfo:UserInfo) (*(articles:PostInformation list)*)=
     [ accountTopRow (Some userInfo)
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -75,6 +75,10 @@ let me userInfo =
       main
           []
           [ h1 [] [ encodedText (userInfo.UserName.ToUpper()) ]
+            (*div [ _class "writtenArticles"] [
+                h1 [] [encodedText "Articles written by User"]
+                div [] (articles |> List.map postCard)
+            ]*)
             a [ _class "action"; _href "/account/logout" ] [ encodedText "Log out" ] ] ]
     |> titledLayout "pblsh.account"
 
@@ -156,3 +160,22 @@ let search (userInfo: UserInfo option) (query: string) (results: PostInformation
             div [] (results |> List.map postCard)    
             ] ]
     |> titledLayoutCss [ "index.css"; "search.css" ] "Search"
+    
+let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) (articles: PostInformation list) =
+    [
+        accountTopRow curUserInfo
+        navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = "Users"; Link = "/users" }
+            { Text = reqUserInfo.UserName; Link = "#" }
+          ]
+        main
+          []
+          [
+            h1 [] [ encodedText (reqUserInfo.UserName) ]
+            div [ _class "writtenArticles"] [
+                h1 [] [encodedText "Articles written by User"]
+                div [] (articles |> List.map postCard)
+            ]
+          ] 
+    ] |> titledLayoutCss ["index.css"] reqUserInfo.UserName

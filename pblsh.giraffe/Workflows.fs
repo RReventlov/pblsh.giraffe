@@ -128,7 +128,26 @@ module Posts =
                     | Sad _ -> Sad(PostCouldNotBeCreated)
                 | None -> Sad(PostNotFound)
         }
-    
+        
+    let getPostsByAuthor (id:Guid) =
+        let idStr = id.ToString()
+        task {
+            let! selectedArticles =
+                selectTask HydraReader.Read createDbx {
+                    for p in posts do
+                        where (p.Author = idStr)
+                        select p.Id
+                        
+                }
+            return selectedArticles
+               |> Seq.map (getPost >> await)
+               |> Seq.filter filterHappy
+               |> Seq.map(fun path ->
+                   match path with //Sad Case wont happen
+                   | Happy s -> s)
+               |> List.ofSeq
+        }
+        
     let getContent id =
         let dir = postDir id
         
@@ -138,15 +157,32 @@ module Posts =
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
-            
+    
+module Users =
+    let getUser (pId: Guid) =
+        let idStr = pId.ToString ()
+        task {
+            let! userSelectTask =
+                selectTask HydraReader.Read createDbx {
+                    for u in AspNetUsers do
+                        where (u.Id = idStr)
+                        select (u.UserName,u.Id)
+                        tryHead
+                }
+            return
+                match userSelectTask with
+                |Some (userName,id) -> {UserName = userName ; Id = Guid.Parse(id) }
+                |None -> {UserName = ""; Id = Guid.Empty}
+        }
 module Search =
     let searchPosts (queryInfo: QueryInfo) =
         task {
-            let authorValue = (if queryInfo.Author.IsSome then queryInfo.Author.Value else "").ToUpper()
+            let authorValue = "%"+(if queryInfo.Author.IsSome then queryInfo.Author.Value else "").ToUpper()+"%"
+            let articleValue = "%"+queryInfo.Article+"%"
             let! fittingPosts = selectTask HydraReader.Read createDbx {
                     for p in posts do
                         join u in AspNetUsers on (p.Author = u.Id)
-                        where (p.Title = queryInfo.Article && u.NormalizedUserName = authorValue)
+                        where (p.Title =% articleValue && u.NormalizedUserName =% authorValue)
                         select p.Id
                    }
             return fittingPosts
@@ -157,5 +193,6 @@ module Search =
                        | Happy s -> s)
                    |> List.ofSeq
         }
+        
                
         
