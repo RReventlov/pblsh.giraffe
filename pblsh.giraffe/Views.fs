@@ -179,3 +179,26 @@ let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) (articles: P
             ]
           ] 
     ] |> titledLayoutCss ["index.css"] reqUserInfo.UserName
+    
+let dotView (userInfo: UserInfo option) (dot:string) (results: PostInformation list) =
+    [ accountTopRow userInfo
+      navigation
+          [ { Text = "Home"; Link = "/index" }
+            { Text = "Search"; Link = "/search" }
+            { Text = (sprintf "\"%s\"" dot)
+              Link = "#" } ]
+      main
+          []
+          [ div
+                [ _class "resultMetaDisplay" ]
+                [ h1
+                      [ _class "queryDisplay" ]
+                      [ span
+                            []
+                            [ encodedText "Results for \""
+                              span [ _class "query" ] [ encodedText dot ]
+                              encodedText "\"" ] ]
+                  div [ _class "countDisplay" ] [ encodedText (sprintf "%d Results found" results.Length) ] ]
+            div [] (results |> List.map postCard)    
+            ] ]
+    |> titledLayoutCss [ "index.css"; "search.css" ] dot    

@@ -162,3 +162,10 @@ let getPost (id: Guid) : HttpHandler =
             | Happy content -> htmlView (Views.post user postInfo content) next ctx
             | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
         | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
+        
+let getDot (dot:string) : HttpHandler =
+    fun next ctx ->
+        let user = getUserOption ctx
+        let articles = Posts.getPostsByDot dot |> await
+        let view = Views.dotView user dot articles
+        htmlView view next ctx
