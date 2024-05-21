@@ -147,7 +147,7 @@ module Posts =
                    | Happy s -> s)
                |> List.ofSeq
         }
-    
+        
     let getContent id =
         let dir = postDir id
         
@@ -177,11 +177,12 @@ module Users =
 module Search =
     let searchPosts (queryInfo: QueryInfo) =
         task {
-            let authorValue = (if queryInfo.Author.IsSome then queryInfo.Author.Value else "").ToUpper()
+            let authorValue = "%"+(if queryInfo.Author.IsSome then queryInfo.Author.Value else "").ToUpper()+"%"
+            let articleValue = "%"+queryInfo.Article+"%"
             let! fittingPosts = selectTask HydraReader.Read createDbx {
                     for p in posts do
                         join u in AspNetUsers on (p.Author = u.Id)
-                        where (p.Title = queryInfo.Article && u.NormalizedUserName = authorValue)
+                        where (p.Title =% articleValue && u.NormalizedUserName =% authorValue)
                         select p.Id
                    }
             return fittingPosts

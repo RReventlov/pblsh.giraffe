@@ -42,7 +42,7 @@ let postSearch (query: SearchContent) : HttpHandler =
     fun next ctx ->
         let parserResult = Parser.Query.parse(query)
         let results = match parserResult with
-                        | Ok p -> Search.searchPosts(p).Result
+                        | Ok p -> Search.searchPosts(p) |> await
                         | Error _ -> []
                                      
         let view = Views.search (getUserOption ctx) query.Query results
@@ -96,8 +96,10 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
 let getAccount () : HttpHandler =
     fun next ctx ->
         let userInfo = getUser ctx
-
-        htmlView (Views.me userInfo) next ctx
+        (*let userID = Users.getUserIDbyName(userInfo.UserName).Result
+        Console.WriteLine(userInfo.Id)
+        let articles = Posts.getPostsByAuthorId(userID).Result*)
+        htmlView (Views.me userInfo (*articles*)) next ctx
 
 let getLogout () : HttpHandler =
     fun next ctx ->
@@ -141,8 +143,10 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
 let getUserById (id: Guid) : HttpHandler =
     fun next ctx ->
         let user = getUserOption ctx
-        let userInfo = Users.getUser(id).Result
-        let articles = Posts.getPostsByAuthor(id).Result
+        let userInfo = Users.getUser(id) |> await
+        //let userInfo = user.Value
+        let idStr = id.ToString()
+        let articles = Posts.getPostsByAuthor id |> await
         let view = Views.userView user userInfo articles
         htmlView view next ctx
 

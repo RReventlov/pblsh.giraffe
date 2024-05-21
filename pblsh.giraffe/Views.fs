@@ -66,7 +66,7 @@ let signUpComplete () =
             ] ]
     |> dialog "pblsh.confirm"
 
-let me userInfo =
+let me (userInfo:UserInfo) (*(articles:PostInformation list)*)=
     [ accountTopRow (Some userInfo)
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -75,6 +75,10 @@ let me userInfo =
       main
           []
           [ h1 [] [ encodedText (userInfo.UserName.ToUpper()) ]
+            (*div [ _class "writtenArticles"] [
+                h1 [] [encodedText "Articles written by User"]
+                div [] (articles |> List.map postCard)
+            ]*)
             a [ _class "action"; _href "/account/logout" ] [ encodedText "Log out" ] ] ]
     |> titledLayout "pblsh.account"
 
