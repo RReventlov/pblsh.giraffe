@@ -80,7 +80,44 @@ module Posts =
         })
             .Result
         |> List.ofSeq
-
+    
+    type GetCommentError =
+        | CommentNotFound
+        | CommentCouldNotBeCreated
+    
+    let getComment id =
+        let idString = id.ToString()
+        task {
+            let! opt =
+                selectTask HydraReader.Read createDbx {
+                    for c in comments do
+                        join u in AspNetUsers on (c.Author = u.Id)
+                        where (c.Id = idString)
+                        select (c.Id,u.UserName,c.Author,c.Content,c.Parent,c.PostId)
+                        tryHead
+                }
+            
+            return
+                match opt with
+                | Some (id, author, authorId, content, parentId, postId) ->
+                    match CommentInformation.create id author authorId content parentId postId (*(RepliesFor id)*) with
+                    | Happy ci -> Happy ci
+                    | Sad _ -> Sad(CommentCouldNotBeCreated)
+                | None -> Sad(CommentNotFound)
+        }      
+        
+    let RepliesFor commentId =
+        (selectTask HydraReader.Read createDbx {
+            for c in comments do
+                where (c.Parent = commentId)
+                select c.Id
+        })
+            .Result
+        |> Seq.map (getComment >> await)
+        |> List.ofSeq    
+    
+    
+    
     let createPostInformation ((id, author, authorId, title): string * string * string * string) =
         PostInformation.create id author authorId title (dotsFor id)
 
@@ -175,6 +212,42 @@ module Posts =
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
+            
+
+    let postComment (comment: NewComment) (postId: Guid) (authorIdStr: string) =
+        Console.WriteLine((sprintf "inserting %s" comment.Content))
+        let idStr = postId.ToString()
+        let insertTask = insertTask createDbx {
+            into comments
+            entity {
+                comments.Author = authorIdStr
+                comments.PostId = idStr 
+                comments.Id = Guid.NewGuid().ToString()
+                comments.Content = comment.Content
+                comments.Parent = comment.Parent.ToString()
+            }
+        }
+        insertTask.Result |> ignore
+        
+    let getComments (id:Guid) =
+        let idStr = id.ToString()
+        task {
+            let! selectedArticles =
+                selectTask HydraReader.Read createDbx {
+                    for c in comments do
+                        where (c.PostId = idStr)
+                        select c.Id
+                }
+            return selectedArticles
+               |> Seq.map (getComment >> await)
+               |> Seq.filter filterHappy
+               |> Seq.map(fun path ->
+                   match path with //Sad Case wont happen
+                   | Happy s -> s)
+               |> List.ofSeq
+        }
+        
+     
     
 module Users =
     let getUser (pId: Guid) =

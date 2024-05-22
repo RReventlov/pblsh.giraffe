@@ -153,10 +153,11 @@ let getUserById (id: Guid) : HttpHandler =
 let postComment (id:Guid) : HttpHandler =
     fun next ctx -> task {
         let! comment = ctx.TryBindFormAsync<NewComment>()
-        
+        let userManager = ctx.GetService<UserManager<IdentityUser>>()
+        let authorId = userManager.GetUserId(ctx.User)
         match mapR comment with
         | Happy comment ->
-            (* do something *)
+            Posts.postComment comment id authorId
             return! redirectTo true (sprintf "/posts/%O" id) next ctx
         | Sad _ ->
             return! htmlView (Views.errorWithRedirect "") next ctx
@@ -166,12 +167,12 @@ let getPost (id: Guid) : HttpHandler =
     fun next ctx ->
         let post = Posts.getPost id |> await
         let user = getUserOption ctx
-
+        let comments = Posts.getComments id |> await
         match post with
         | Happy postInfo ->
             let content = Posts.getContent postInfo
             match content with
-            | Happy content -> htmlView (Views.post user postInfo content ["1";"2"]) next ctx
+            | Happy content -> htmlView (Views.post user postInfo content comments) next ctx
             | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
         | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
         

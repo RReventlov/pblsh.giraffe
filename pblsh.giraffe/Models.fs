@@ -26,7 +26,10 @@ module Forms =
     type NewPostInfo = { Title: string; Dots: string }
     
     [<CLIMutable>]
-    type NewComment = { content:string }
+    type NewComment = {
+        Content:string;
+        Parent:Guid
+    }
     
     [<CLIMutable>]
     type SearchContent = { Query: string }
@@ -91,12 +94,44 @@ type PostInformation =
 type CommentInformation =
     {
         Id: Guid
-        Author: string
+        Author: String1
         AuthorId: Guid
-        Content: string
-        Children: CommentInformation list
-        Depth: int
-    }
+        Content: String1
+        Parent: Guid
+        PostId: Guid
+        Replies: CommentInformation list
+    }    
+    
+module CommentInformation =
+    
+    type CommentInformationError =
+        | AuthorTooShort of string
+        | UnknownIdFormat of string
+        | ContentTooShort of string
+        | RepliesTooShort of string list
+        
+    
+    let create uncheckedId uncheckedAuthor uncheckedAuthorId uncheckedContent uncheckedParentId uncheckedPostId (*uncheckedReplies*) =
+        path {
+            let! id = parseToGuid uncheckedId <|? UnknownIdFormat
+            let! author = String1.create uncheckedAuthor |> mapR <|? AuthorTooShort
+            let! authorId = parseToGuid uncheckedAuthorId <|? UnknownIdFormat
+            let! content = String1.create uncheckedContent |> mapR <|? ContentTooShort
+            let! parentId = parseToGuid uncheckedParentId <|? UnknownIdFormat
+            let! postId = parseToGuid uncheckedPostId <|? UnknownIdFormat
+            //let! replies = uncheckedReplies |> List.map (CommentInformation.create >> mapR) |> collect <|? RepliesTooShort
+            
+            return
+                {
+                    Id = id
+                    Author = author 
+                    AuthorId = authorId
+                    Content = content
+                    Parent = parentId
+                    PostId = postId
+                    Replies = []
+                }
+        }
 
 module PostInformation =
 

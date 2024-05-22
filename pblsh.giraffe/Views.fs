@@ -148,7 +148,7 @@ let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
                     p [ _class "commentAmount" ] [encodedText (sprintf "%d Results found" comments.Length)]
                 ]
                 
-                div [] (comments |> List.map commentCardPlaceholder)
+                div [] (comments |> List.map commentCard)
             ] ] ]
     |> titledLayoutCssJs [ "pblsh.css"; "post.css" ] ["post.js"] (String1.value postInfo.Title)
 
