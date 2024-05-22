@@ -14,6 +14,22 @@
     --border-color: hsl(0, 0%, 85%);
 }
 
+body.dark {
+    font-family: Inter, sans-serif;
+    color: #333;
+    font-size: .9em;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    --main-color: hsl(259, 79%, 20%);
+    --inverted-main-color: hsl(79, 78%, 20%);
+    --secondary-color: hsl(240, 67%, 94%);
+    --action-color: hsl(259, 79%, 60%);
+    --action-color-hover: hsl(259, 79%, 65%);
+    --warned-color: hsl(0, 100%, 67%);
+    --warned-color-hover: hsl(0, 84%, 41%);
+    --border-color: hsl(0, 0%, 85%);
+}
+
 h1 {
     font-weight: 100;
 }

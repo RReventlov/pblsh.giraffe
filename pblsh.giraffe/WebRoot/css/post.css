@@ -27,6 +27,15 @@ main {
     flex-direction: row;
 }
 
+.commentcard > .interactions > a {
+    padding-right: 10px;
+}
+
+.commentcard > .replies {
+    transform: scale(80%);
+    translate: 25px;
+}
+
 main a {
     color: var(--action-color);
 }

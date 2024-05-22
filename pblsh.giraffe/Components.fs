@@ -1,5 +1,6 @@
 ﻿module pblsh.Components
 
+open System
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Models
@@ -82,9 +83,41 @@ let postCard postInfo =
           div
               []
               [ span [] [ encodedText "Written by " ]
-                a [ _href "#"; _class "postcard-author" ] [ encodedText (String1.value postInfo.Author) ] ]
+                a [ _href (Urls.userUrl postInfo); _class "postcard-author" ] [ encodedText (String1.value postInfo.Author) ] ]
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
+        
+let rec commentCard commentInfo =
+    div
+        [ _class "commentcard"; ]
+        [ h2
+            []
+            [
+                a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText  commentInfo.Author ]
+                ]
+          div [ _class "content" ] [
+              rawText  commentInfo.Content
+          ]
+          span [ _class "interactions" ] [
+              a [ _href "#" ] [ encodedText "Like" ]
+              a [ _href "#" ] [ encodedText "Reply" ]
+          ]
+          if(commentInfo.Children.Length > 0) then
+              div [ _class "replies" ] [
+              div [] (commentInfo.Children |> List.map commentCard)
+           ]
+    ]
 
+let newCommentDialog (id:Guid) =
+    form [ _action (sprintf "/posts/%O/comments" id); _method "post" ] [
+        textarea [_name "content" ;_rows "5"; _cols "20"] []
+        br []
+        span [_class "Buttons"] [
+            input [ _type "submit"; _value "Submit"; _class "filled-action"]
+            input [ _type "reset"; _value "Reset"; _class "warned-action" ]
+        ]
+    ]
+
+let commentCardPlaceholder commentInfo = commentCard {Author = "Lars"; Id = Guid.Empty; AuthorId  = Guid.Empty; Content = "Hallo das ist ein Testkommentar"; Depth = 0; Children = [{Author = "Lars"; Id = Guid.Empty; AuthorId  = Guid.Empty; Content = "Hallo das ist eine Testantwort"; Depth = 0; Children = [] }] }
 let dialogCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     [ emptyTopRow (); main [ _class "shiny" ] [ div [ _id "center" ] content ] ]
     |> titledLayoutCssJs ("dialog.css" :: cssFiles) ("mousetracker.js" :: jsFiles) pageTitle

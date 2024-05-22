@@ -26,6 +26,9 @@ module Forms =
     type NewPostInfo = { Title: string; Dots: string }
     
     [<CLIMutable>]
+    type NewComment = { content:string }
+    
+    [<CLIMutable>]
     type SearchContent = { Query: string }
     
     [<CLIMutable>]
@@ -84,6 +87,16 @@ type PostInformation =
       AuthorId: Guid
       Title: String1
       Dots: Dot list }
+    
+type CommentInformation =
+    {
+        Id: Guid
+        Author: string
+        AuthorId: Guid
+        Content: string
+        Children: CommentInformation list
+        Depth: int
+    }
 
 module PostInformation =
 

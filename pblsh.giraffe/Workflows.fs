@@ -18,7 +18,7 @@ open pblsh.Helper
 
 module Posts =
 
-    let postDir post = sprintf "%s/%O" postRoot post.Id
+    let postDir (post:PostInformation) = sprintf "%s/%O" postRoot post.Id
 
     let persistPost (post: Post) (files: IFormFileCollection) =
         let insertedRows =
@@ -166,7 +166,7 @@ module Posts =
                |> List.ofSeq
         }
         
-    let getContent id =
+    let getContent (id:PostInformation) =
         let dir = postDir id
         
         if DirectoryInfo(dir).Exists then
