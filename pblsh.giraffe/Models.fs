@@ -11,6 +11,9 @@ let parseToGuid (str: string) =
     with
     | :? System.FormatException as e -> Sad e.Message
     | _ -> Sad(sprintf "unknown error parsing %s to guid" str)
+    
+let parseToPath obj =
+    Happy(obj)
 
 module Forms =
     [<CLIMutable>]
@@ -99,7 +102,7 @@ type CommentInformation =
         Content: String1
         Parent: Guid
         PostId: Guid
-        Replies: CommentInformation list
+        Replies: string list
     }    
     
 module CommentInformation =
@@ -111,7 +114,7 @@ module CommentInformation =
         | RepliesTooShort of string list
         
     
-    let create uncheckedId uncheckedAuthor uncheckedAuthorId uncheckedContent uncheckedParentId uncheckedPostId (*uncheckedReplies*) =
+    let create uncheckedId uncheckedAuthor uncheckedAuthorId uncheckedContent uncheckedParentId uncheckedPostId uncheckedReplies =
         path {
             let! id = parseToGuid uncheckedId <|? UnknownIdFormat
             let! author = String1.create uncheckedAuthor |> mapR <|? AuthorTooShort
@@ -119,8 +122,7 @@ module CommentInformation =
             let! content = String1.create uncheckedContent |> mapR <|? ContentTooShort
             let! parentId = parseToGuid uncheckedParentId <|? UnknownIdFormat
             let! postId = parseToGuid uncheckedPostId <|? UnknownIdFormat
-            //let! replies = uncheckedReplies |> List.map (CommentInformation.create >> mapR) |> collect <|? RepliesTooShort
-            
+            let! replies = parseToPath uncheckedReplies <|? RepliesTooShort
             return
                 {
                     Id = id
@@ -129,7 +131,7 @@ module CommentInformation =
                     Content = content
                     Parent = parentId
                     PostId = postId
-                    Replies = []
+                    Replies = replies
                 }
         }
 

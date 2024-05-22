@@ -4,8 +4,11 @@ open System
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
 open pblsh.Models
-open pblsh.Paths
 open pblsh.Types
+open pblsh.Workflows
+open pblsh.Helper
+open pblsh.Paths
+
 
 let titledLayoutCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     html
@@ -88,6 +91,8 @@ let postCard postInfo =
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
         
 let rec commentCard commentInfo =
+    Console.WriteLine(commentInfo.Id)
+    Console.WriteLine(commentInfo.Replies)
     div
         [ _class "commentcard"; ]
         [ h2
@@ -99,9 +104,11 @@ let rec commentCard commentInfo =
               rawText  (String1.value commentInfo.Content)
           ]
           span [ _class "interactions" ] [
-              a [ _href "#" ] [ encodedText "Like" ]
-              a [ _href "#" ] [ encodedText "Reply" ]
-          ]
+              input [ _type "button"; _class "filled-action"; _value "reply" ]
+          ] 
+          div [_class "replies"] (commentInfo.Replies |> List.map (Posts.getComment >> await) |> List.filter filterHappy |> List.map(fun path ->
+                       match path with //Sad Case wont happen
+                       | Happy s -> s)|> List.map commentCard)
     ]
 
 let newCommentDialog (id:Guid) =

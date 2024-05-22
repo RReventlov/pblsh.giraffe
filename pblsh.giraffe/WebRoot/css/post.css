@@ -32,7 +32,7 @@ main {
 }
 
 .commentcard > .replies {
-    transform: scale(80%);
+    transform: scale(90%);
     translate: 25px;
 }
 

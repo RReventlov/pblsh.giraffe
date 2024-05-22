@@ -85,27 +85,6 @@ module Posts =
         | CommentNotFound
         | CommentCouldNotBeCreated
     
-    let getComment id =
-        let idString = id.ToString()
-        task {
-            let! opt =
-                selectTask HydraReader.Read createDbx {
-                    for c in comments do
-                        join u in AspNetUsers on (c.Author = u.Id)
-                        where (c.Id = idString)
-                        select (c.Id,u.UserName,c.Author,c.Content,c.Parent,c.PostId)
-                        tryHead
-                }
-            
-            return
-                match opt with
-                | Some (id, author, authorId, content, parentId, postId) ->
-                    match CommentInformation.create id author authorId content parentId postId (*(RepliesFor id)*) with
-                    | Happy ci -> Happy ci
-                    | Sad _ -> Sad(CommentCouldNotBeCreated)
-                | None -> Sad(CommentNotFound)
-        }      
-        
     let RepliesFor commentId =
         (selectTask HydraReader.Read createDbx {
             for c in comments do
@@ -113,11 +92,28 @@ module Posts =
                 select c.Id
         })
             .Result
-        |> Seq.map (getComment >> await)
-        |> List.ofSeq    
+        |> List.ofSeq  
     
-    
-    
+    let rec getComment id =
+        task {
+            let! opt =
+                selectTask HydraReader.Read createDbx {
+                    for c in comments do
+                        join u in AspNetUsers on (c.Author = u.Id)
+                        where (c.Id = id)
+                        select (c.Id,u.UserName,c.Author,c.Content,c.Parent,c.PostId)
+                        tryHead
+                }
+            
+            return
+                match opt with
+                | Some (cid, author, authorId, content, parentId, postId) ->  
+                    match CommentInformation.create id author authorId content parentId postId (RepliesFor cid) with
+                    | Happy ci -> Happy ci
+                    | Sad _ -> Sad(CommentCouldNotBeCreated)
+                | None -> Sad(CommentNotFound)
+        }      
+
     let createPostInformation ((id, author, authorId, title): string * string * string * string) =
         PostInformation.create id author authorId title (dotsFor id)
 
@@ -231,11 +227,12 @@ module Posts =
         
     let getComments (id:Guid) =
         let idStr = id.ToString()
+        let emptyIdStr = Guid.Empty.ToString()
         task {
             let! selectedArticles =
                 selectTask HydraReader.Read createDbx {
                     for c in comments do
-                        where (c.PostId = idStr)
+                        where (c.PostId = idStr && c.Parent = emptyIdStr)
                         select c.Id
                 }
             return selectedArticles
