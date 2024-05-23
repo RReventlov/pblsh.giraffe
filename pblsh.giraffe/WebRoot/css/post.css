@@ -27,6 +27,8 @@ main {
     flex-direction: row;
 }
 
+
+
 .commentcard > .interactions > a {
     padding-right: 10px;
 }
