@@ -142,7 +142,7 @@ let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
                         h3 [ _class "Headline"] [ encodedText "Comment Section" ]
                         match userInfo with
                         | Some _ ->
-                            input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action" ]
+                            input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action-slim" ]
                             div [ _style "display:none"; _id "newComment" ] [
                                     newCommentDialog postInfo.Id
                             ]

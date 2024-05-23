@@ -133,6 +133,15 @@ main {
     transition: background .125s, border .125s;
 }
 
+.filled-action-slim {
+    border: 1px solid var(--action-color);
+    border-radius: .5rem;
+    padding: .1rem;
+    background: var(--action-color);
+    color: white;
+    transition: background .125s, border .125s;
+}
+
 .filled-action:hover, .action:hover {
     color: white;
     background: var(--action-color-hover);

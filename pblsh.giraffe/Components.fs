@@ -106,22 +106,22 @@ let rec commentCard commentInfo (userInfo:UserInfo option) =
         [ _class "commentcard"; ]
         [
           span [ _class "commentHeader" ] [
-            h2
+            p
                 []
                 [
                     a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText  (String1.value commentInfo.Author) ]
                 ]
-            input [ _type "Button"; _class "filled-action showButton"; _value "Show"; _style "display:none" ]
+            input [ _type "Button"; _class "filled-action-slim showButton"; _value "Show"; _style "display:none" ]
           ]
           div [ _class "comment" ] [
-              input [ _type "Button"; _value "Hide"; _class "filled-action hideButton" ]
+              input [ _type "Button"; _value "Hide"; _class "filled-action-slim hideButton" ]
               div [ _class "content" ] [
                   rawText  (String1.value commentInfo.Content)
               ]
               match userInfo with
               |Some _ ->
                    span [ _class "interactions" ] [
-                      input [ _type "button"; _class "filled-action replyButton"; _value "reply" ]
+                      input [ _type "button"; _class "filled-action-slim replyButton"; _value "reply" ]
                       replyForm commentInfo
                    ]
               |None -> p [] [ encodedText "You need to Sign in to reply"]     

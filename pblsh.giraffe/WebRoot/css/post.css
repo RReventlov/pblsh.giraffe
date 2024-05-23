@@ -27,7 +27,20 @@ main {
     flex-direction: row;
 }
 
+.commentcard > .commentHeader > p {
+    font-size: 1.5rem;
+}
 
+.commentcard > .comment > .content {
+    padding: 1.5rem;
+}
+
+.commentcard {
+    margin-top: 1rem;
+    padding: 10px 50px 10px 10px;
+    border: solid 2px var(--border-color);
+    box-shadow: 10px 10px var(--secondary-color);
+}
 
 .commentcard > .interactions > a {
     padding-right: 10px;
