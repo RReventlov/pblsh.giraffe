@@ -33,6 +33,7 @@ main {
 
 .commentcard > .comment > .content {
     padding: 1.5rem;
+    overflow-wrap: break-word;
 }
 
 .commentcard {
@@ -40,15 +41,20 @@ main {
     padding: 10px 50px 10px 10px;
     border: solid 2px var(--border-color);
     box-shadow: 10px 10px var(--secondary-color);
+    margin-bottom: 1rem;
 }
+
 
 .commentcard > .interactions > a {
     padding-right: 10px;
 }
 
 .commentcard > .comment > .replies {
-    transform: scale(90%);
     translate: 25px;
+}
+
+.commentcard > .interactions > .replyDialog {
+    display: none;
 }
 
 main a {

@@ -135,7 +135,7 @@ main {
 
 .filled-action-slim {
     border: 1px solid var(--action-color);
-    border-radius: .5rem;
+    border-radius: .3rem;
     padding: .1rem;
     background: var(--action-color);
     color: white;

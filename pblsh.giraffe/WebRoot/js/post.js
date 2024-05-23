@@ -22,6 +22,7 @@ commentButton.addEventListener("click", function () {
    commentButton.setAttribute("style","display:none");
    commentForm.setAttribute("style","");
 })
+
 const replyButtons = document.querySelectorAll('.replyButton');
 replyButtons.forEach(function (button) {
    button.addEventListener('click', function () {
