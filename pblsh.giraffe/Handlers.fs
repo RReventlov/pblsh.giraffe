@@ -155,8 +155,10 @@ let postComment (id:Guid) : HttpHandler =
         let! comment = ctx.TryBindFormAsync<NewComment>()
         let userManager = ctx.GetService<UserManager<IdentityUser>>()
         let authorId = userManager.GetUserId(ctx.User)
+        
         match mapR comment with
         | Happy comment ->
+            Console.WriteLine(comment.Parent.ToString())
             Posts.postComment comment id authorId
             return! redirectTo true (sprintf "/posts/%O" id) next ctx
         | Sad _ ->

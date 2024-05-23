@@ -90,25 +90,45 @@ let postCard postInfo =
                 a [ _href (Urls.userUrl postInfo); _class "postcard-author" ] [ encodedText (String1.value postInfo.Author) ] ]
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
         
-let rec commentCard commentInfo =
-    Console.WriteLine(commentInfo.Id)
-    Console.WriteLine(commentInfo.Replies)
+let replyForm (commentInfo:CommentInformation) =
+    form [ _action (sprintf "/posts/%O/comments" commentInfo.PostId); _method "post"; _style "display:none" ] [
+        textarea [_name "Content" ;_rows "5"; _cols "20"] []
+        input [ _type "hidden"; _name "Parent"; _value(commentInfo.Id.ToString()); ]
+        br []
+        span [_class "Buttons"] [
+            input [ _type "submit"; _value "Submit"; _class "filled-action"]
+            input [ _type "reset"; _value "Reset"; _class "warned-action" ]
+        ]
+    ]
+        
+let rec commentCard commentInfo (userInfo:UserInfo option) =
     div
         [ _class "commentcard"; ]
-        [ h2
-            []
-            [
-                a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText  (String1.value commentInfo.Author) ]
+        [
+          span [ _class "commentHeader" ] [
+            h2
+                []
+                [
+                    a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText  (String1.value commentInfo.Author) ]
                 ]
-          div [ _class "content" ] [
-              rawText  (String1.value commentInfo.Content)
+            input [ _type "Button"; _class "filled-action showButton"; _value "Show"; _style "display:none" ]
           ]
-          span [ _class "interactions" ] [
-              input [ _type "button"; _class "filled-action"; _value "reply" ]
-          ] 
-          div [_class "replies"] (commentInfo.Replies |> List.map (Posts.getComment >> await) |> List.filter filterHappy |> List.map(fun path ->
-                       match path with //Sad Case wont happen
-                       | Happy s -> s)|> List.map commentCard)
+          div [ _class "comment" ] [
+              input [ _type "Button"; _value "Hide"; _class "filled-action hideButton" ]
+              div [ _class "content" ] [
+                  rawText  (String1.value commentInfo.Content)
+              ]
+              match userInfo with
+              |Some _ ->
+                   span [ _class "interactions" ] [
+                      input [ _type "button"; _class "filled-action replyButton"; _value "reply" ]
+                      replyForm commentInfo
+                   ]
+              |None -> p [] [ encodedText "You need to Sign in to reply"]     
+              div [_class "replies"] (commentInfo.Replies |> List.map (Posts.getComment >> await) |> List.filter filterHappy |> List.map(fun path ->
+                           match path with //Sad Case wont happen
+                           | Happy s -> s)|> List.map (fun c -> commentCard c userInfo) )
+          ]
     ]
 
 let newCommentDialog (id:Guid) =

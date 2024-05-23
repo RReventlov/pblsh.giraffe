@@ -140,15 +140,18 @@ let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
                     
                     span [] [
                         h3 [ _class "Headline"] [ encodedText "Comment Section" ]
-                        input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action" ]
-                        div [ _style "display:none"; _id "newComment" ] [
-                                newCommentDialog postInfo.Id
-                        ]
+                        match userInfo with
+                        | Some _ ->
+                            input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action" ]
+                            div [ _style "display:none"; _id "newComment" ] [
+                                    newCommentDialog postInfo.Id
+                            ]
+                        | None -> p [] [encodedText "You need to Sign in to write a comment"]    
                     ]
                     p [ _class "commentAmount" ] [encodedText (sprintf "%d Results found" comments.Length)]
                 ]
                 
-                div [] (comments |> List.map commentCard)
+                div [] (comments |> List.map (fun c -> commentCard c userInfo))
             ] ] ]
     |> titledLayoutCssJs [ "pblsh.css"; "post.css" ] ["post.js"] (String1.value postInfo.Title)
 

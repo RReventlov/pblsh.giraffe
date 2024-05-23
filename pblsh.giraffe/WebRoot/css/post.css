@@ -31,7 +31,7 @@ main {
     padding-right: 10px;
 }
 
-.commentcard > .replies {
+.commentcard > .comment > .replies {
     transform: scale(90%);
     translate: 25px;
 }
