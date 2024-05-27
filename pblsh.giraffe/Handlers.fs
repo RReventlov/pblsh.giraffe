@@ -169,6 +169,24 @@ let postComment ((postId, parentId): Guid * Guid) : HttpHandler =
 
             | Sad _ -> return! htmlView (Views.errorWithRedirect "") next ctx
         }
+        
+let postComment (postId:Guid) : HttpHandler =
+    fun next ctx -> task {
+        let! comment = ctx.TryBindFormAsync<NewComment>()
+        let userManager = ctx.GetService<UserManager<IdentityUser>>()
+        let authorId = userManager.GetUserId(ctx.User)
+        
+        match mapR comment with
+        | Happy comment ->
+            
+            let newId = Posts.postComment comment postId authorId
+            let redirectId = if comment.Parent.Equals Guid.Empty then newId else comment.Parent
+            return! redirectTo true (sprintf "/posts/%O#%O" postId redirectId) next ctx
+                
+        | Sad _ ->
+            return! htmlView (Views.errorWithRedirect "") next ctx
+    }
+        
 
 let getPost (id: Guid) : HttpHandler =
     fun next ctx ->
@@ -179,7 +197,6 @@ let getPost (id: Guid) : HttpHandler =
         match post with
         | Happy postInfo ->
             let content = Posts.getContent postInfo
-
             match content with
             | Happy content -> htmlView (Views.post user postInfo content comments) next ctx
             | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
