@@ -210,11 +210,12 @@ module Posts =
             Sad "couldn't find file"
             
 
-    let postComment (comment: NewComment) (postId: Guid) (authorIdStr: string) =
+    let postComment (comment: NewComment) (postId: Guid) (parentId: Guid) (authorIdStr: string) =
         Console.WriteLine((sprintf "inserting %s" comment.Content))
         let idStr = postId.ToString()
         let newId = Guid.NewGuid()
         let newIdStr= newId.ToString()
+        let parentIdStr = parentId.ToString()
         let insertTask = insertTask createDbx {
             into comments
             entity {
@@ -222,7 +223,7 @@ module Posts =
                 comments.PostId = idStr 
                 comments.Id = newIdStr
                 comments.Content = comment.Content
-                comments.Parent = comment.Parent.ToString()
+                comments.Parent = parentIdStr
             }
         }
         insertTask.Result |> ignore

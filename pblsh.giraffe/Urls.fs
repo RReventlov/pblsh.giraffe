@@ -11,3 +11,4 @@ let dotUrl dot = sprintf "/dots/%s" (String1.value dot)
 let userUrl (postInfo: PostInformation) = sprintf "/users/%O" postInfo.AuthorId
 let userUrlComment (commentInfo: CommentInformation) = sprintf "/users/%O" commentInfo.AuthorId
 let postUrl (postInfo: PostInformation) = sprintf "/posts/%s" (postInfo.Id.ToString())
+let loginWithRedirect (url: string) = sprintf "/account/login?returnUrl=%s" url

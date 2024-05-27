@@ -16,8 +16,8 @@ let index (userInfo: UserInfo option) (posts: PostInformation list) =
 let login (redirectAfterLogin: RedirectInfo option) =
     let actionUrl =
         match redirectAfterLogin with
-        | Some r -> sprintf "login?ReturnUrl=%s" r.ReturnUrl
-        | None -> "login"
+        | Some r -> Urls.loginWithRedirect r.ReturnUrl
+        | None -> "/account/login"
 
     [ form
           [ _action actionUrl; _method "post"; _class "main-content" ]

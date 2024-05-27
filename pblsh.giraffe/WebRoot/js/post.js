@@ -1,33 +1,28 @@
+const toggleReplies = document.querySelectorAll(".toggle-replies")
+const togglmao = {"none": "", "": "none"}
 
-const hideButtons = document.querySelectorAll('.hideButton');
-hideButtons.forEach(function (button) {
-   button.addEventListener('click', function () {
-      const comment = this.parentElement
-      const showButton = comment.previousElementSibling.lastElementChild
-      showButton.style.display = 'block'
-      comment.style.display = 'none';
-   });
-});
-const showButtons = document.querySelectorAll('.showButton');
-showButtons.forEach(function (button) {
-   button.addEventListener('click', function () {
-      const comment = this.parentElement.nextElementSibling;
-      this.style.display = 'none';
-      comment.style.display = 'block';
-   });
-});
-var commentButton = document.getElementById("writeComment");
-var commentForm = document.getElementById("newComment");
-commentButton.addEventListener("click", function () {
-   commentButton.setAttribute("style","display:none");
-   commentForm.setAttribute("style","");
+toggleReplies.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        const replies = btn.nextElementSibling
+        const answerCount = replies.nextElementSibling
+        replies.style.display = togglmao[replies.style.display]
+        answerCount.style.display = togglmao[answerCount.style.display]
+    })
 })
 
-const replyButtons = document.querySelectorAll('.replyButton');
-replyButtons.forEach(function (button) {
-   button.addEventListener('click', function () {
-      const form = this.nextElementSibling;
-      this.style.display = 'none';
-      form.style.display = 'block';
-   });
-});
+const openReplyBox = document.querySelectorAll(".comment-reply-open")
+const replyBox = document.querySelectorAll(".comment-reply-container")
+const closeReplyBox = document.querySelectorAll(".comment-reply-cancel")
+
+openReplyBox.forEach((btn, i) => {
+    btn.addEventListener("click", () => {
+        replyBox[i].style.display = "flex"
+    })
+})
+
+
+closeReplyBox.forEach((btn, i) => {
+    btn.addEventListener("click", () => {
+        replyBox[i].style.display = "none"
+    })
+})

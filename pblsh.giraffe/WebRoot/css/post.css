@@ -27,34 +27,63 @@ main {
     flex-direction: row;
 }
 
-.commentcard > .commentHeader > p {
-    font-size: 1.5rem;
+.comment-card > p {
+    margin: .75rem 0;
 }
 
-.commentcard > .comment > .content {
-    padding: 1.5rem;
-    overflow-wrap: break-word;
+.comment-header {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    align-items: center;
 }
 
-.commentcard {
-    margin-top: 1rem;
-    padding: 10px 50px 10px 10px;
-    border: solid 2px var(--border-color);
-    box-shadow: 10px 10px var(--secondary-color);
-    margin-bottom: 1rem;
+.comment-reply-open, .comment-reply-login {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
 }
 
-
-.commentcard > .interactions > a {
-    padding-right: 10px;
-}
-
-.commentcard > .comment > .replies {
-    translate: 25px;
-}
-
-.commentcard > .interactions > .replyDialog {
+.comment-reply-container {
+    border: 1px solid var(--action-color);
+    border-radius: .5rem;
+    padding: .5rem;
     display: none;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.comment-reply-actions {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+}
+
+.comment-reply-actions > button {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+}
+
+.comment-replies-container {
+    display: grid;
+    grid-template-columns: 20px auto;
+}
+
+.toggle-replies {
+    width: 2rem;
+    min-height: .5rem;
+    border: none;
+    border-left: 1px solid lightgray;
+    color: transparent;
+    background: transparent;
+    transition: border-left .125s;
+    display: block;
+}
+
+.toggle-replies:hover {
+    border-left-color: gray;
+    border-left-width: 2px;
 }
 
 main a {

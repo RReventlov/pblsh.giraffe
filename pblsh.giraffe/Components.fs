@@ -88,47 +88,55 @@ let postCard postInfo =
                     [ encodedText (String1.value postInfo.Author) ] ]
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
 
-let replyForm (commentInfo: CommentInformation) =
-    form
-        [ _action (sprintf "/posts/%O/comments" commentInfo.PostId)
-          _method "post"
-          _style "display:none" ]
-        [ textarea [ _name "Content"; _rows "5"; _cols "20" ] []
-          input [ _type "hidden"; _name "Parent"; _value (commentInfo.Id.ToString()) ]
-          br []
-          span
-              [ _class "Buttons" ]
-              [ input [ _type "submit"; _value "Submit"; _class "filled-action" ]
-                input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ]
+let replyContainer (commentInfo: CommentInformation) (userInfo: UserInfo option) =
+    match userInfo with
+    | None -> div [] []
+    | Some _ ->
+        form
+            [ _class "comment-reply-container"
+              _action (sprintf "/posts/%O/comments/%O" commentInfo.PostId commentInfo.Id)
+              _method "post" ]
+            [ textarea [ _name "Content" ] []
+              div
+                  [ _class "comment-reply-actions" ]
+                  [ button
+                        [ _class "comment-reply-send transparent-action" ]
+                        [ encodedText "Send "; img [ _src "/icons/send.svg" ] ]
+                    button
+                        [ _class "comment-reply-cancel transparent-action"; _type "button" ]
+                        [ encodedText "Cancel"; img [ _src "/icons/slash-circle.svg" ] ] ] ]
 
-let rec commentCard commentInfo (userInfo: UserInfo option) =
+let rec commentCard (commentInfo: CommentInformation) (userInfo: UserInfo option) =
+    let replyButton =
+        match userInfo with
+        | None ->
+            a
+                [ _type "button"
+                  _href (Urls.loginWithRedirect (sprintf "/posts/%O%%23%O" commentInfo.PostId commentInfo.Id))
+                  _class "comment-reply-login transparent-action-link" ]
+        | Some _ -> button [ _type "button"; _class "comment-reply-open transparent-action" ]
+
     div
-        [ _class "commentcard"; _id (commentInfo.Id.ToString()) ]
-        [ span
-              [ _class "commentHeader" ]
-              [ p
-                    []
-                    [ a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText (String1.value commentInfo.Author) ] ]
-                input
-                    [ _type "Button"
-                      _class "filled-action-slim showButton"
-                      _value "Show"
-                      _style "display:none" ] ]
-          div
-              [ _class "comment" ]
-              [ input [ _type "Button"; _value "Hide"; _class "filled-action-slim hideButton" ]
-                div [ _class "content" ] [ rawText (String1.value commentInfo.Content) ]
-                match userInfo with
-                | Some _ ->
-                    span
-                        [ _class "interactions" ]
-                        [ input [ _type "button"; _class "filled-action-slim replyButton"; _value "reply" ]
-                          replyForm commentInfo ]
-                | None -> p [] [ encodedText "You need to Sign in to reply" ]
-                div
-                    [ _class "replies" ]
-                    ((Posts.getReplies commentInfo.Replies)
-                     |> List.map (fun c -> commentCard c userInfo)) ] ]
+        [ _class "comment-card"; _id (commentInfo.Id.ToString()) ]
+        [ p
+              [ _class "comment-header" ]
+              [ a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText (String1.value commentInfo.Author) ]
+                replyButton [ encodedText "Reply"; img [ _src "/icons/chat-dots.svg" ] ] ]
+          p [ _class "comment-content" ] [ rawText (String1.value commentInfo.Content) ]
+          replyContainer commentInfo userInfo
+          if (commentInfo.Replies |> List.length) <> 0 then
+              div
+                  [ _class "comment-replies-container" ]
+                  [ button [ _class "toggle-replies" ] []
+                    div
+                        [ _class "comment-replies" ]
+                        ((Posts.getReplies commentInfo.Replies)
+                         |> List.map (fun c -> commentCard c userInfo))
+                    div
+                        [ _style "display: none" ]
+                        [ encodedText (sprintf "%d replies" (commentInfo.Replies |> List.length)) ] ]
+          else
+              div [] [] ]
 
 let newCommentDialog (id: Guid) =
     form

@@ -1,9 +1,10 @@
 ﻿body {
     font-family: Inter, sans-serif;
-    color: #333;
+    color: var(--color);
     font-size: .9em;
     display: grid;
     grid-template-rows: auto auto 1fr;
+    --color: #333;
     --main-color: hsl(259, 79%, 20%);
     --inverted-main-color: hsl(79, 78%, 20%);
     --secondary-color: hsl(240, 67%, 94%);
@@ -40,6 +41,14 @@ header {
     padding: .5rem;
     height: 36px;
     align-items: center;
+}
+
+[contenteditable] {
+    outline: 1px solid transparent;
+}
+
+textarea {
+    resize: vertical;
 }
 
 #logo {
@@ -116,6 +125,7 @@ main {
     border: 1px solid var(--action-color);
     border-radius: .5rem;
     padding: .5rem;
+    background: transparent;
     transition: background .125s;
 }
 
@@ -163,6 +173,20 @@ main {
     color: white;
     transition: background .125s, border .125s;
     animation: shake .35s infinite;
+}
+
+.transparent-action {
+    background: transparent;
+    border: transparent;
+}
+
+.transparent-action-link {
+    text-decoration: none;
+    color: var(--color);
+}
+
+.transparent-action-link:hover {
+    text-decoration: none;
 }
 
 button:hover {
