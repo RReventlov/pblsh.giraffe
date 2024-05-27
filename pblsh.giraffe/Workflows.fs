@@ -15,6 +15,7 @@ open pblsh.DataAccess
 open pblsh.Types
 open pblsh.Models.Forms
 open pblsh.Helper
+open FSharp.Formatting.Markdown
 
 module Posts =
 
@@ -171,7 +172,7 @@ module Posts =
         
         if DirectoryInfo(dir).Exists then
             match DirectoryInfo(dir).GetFiles() |> Array.tryHead with
-            | Some file -> Happy(File.ReadAllText(file.FullName))
+            | Some file -> Happy(Markdown.ToHtml(File.ReadAllText(file.FullName)))
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
