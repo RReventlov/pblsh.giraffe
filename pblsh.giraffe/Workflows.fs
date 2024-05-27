@@ -235,7 +235,7 @@ module Posts =
                 comments.Author = authorIdStr
                 comments.PostId = idStr 
                 comments.Id = newIdStr
-                comments.Content = comment.Content
+                comments.Content = Markdown.ToHtml(comment.Content)
                 comments.Parent = parentIdStr
             }
         }
