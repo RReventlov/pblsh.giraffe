@@ -158,7 +158,7 @@ let postComment (postId:Guid) : HttpHandler =
         
         match mapR comment with
         | Happy comment ->
-            Console.WriteLine(comment.Parent.ToString())
+            
             let newId = Posts.postComment comment postId authorId
             let redirectId = if comment.Parent.Equals Guid.Empty then newId else comment.Parent
             return! redirectTo true (sprintf "/posts/%O#%O" postId redirectId) next ctx
@@ -175,6 +175,7 @@ let getPost (id: Guid) : HttpHandler =
         match post with
         | Happy postInfo ->
             let content = Posts.getContent postInfo
+            
             match content with
             | Happy content -> htmlView (Views.post user postInfo content comments) next ctx
             | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx

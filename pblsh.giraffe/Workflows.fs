@@ -2,6 +2,7 @@ module pblsh.Workflows
 
 open System
 open System.IO
+open System.Text
 open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
 open Microsoft.FSharp.Control
@@ -38,9 +39,20 @@ module Posts =
         Directory.CreateDirectory contentRoot |> ignore
 
         for file in files do
-            let fs = File.Create((sprintf "%s/%s" contentRoot file.FileName))
-            file.CopyTo fs
-            fs.Dispose()
+            let filepath = (sprintf "%s/%s" contentRoot file.FileName)
+            
+            if file.FileName.Contains(".md") then
+                let fs = File.Create(filepath+".html")
+                let sr = new StreamReader(file.OpenReadStream())
+                let content = Markdown.ToHtml(sr.ReadToEnd())
+                fs.Write(Encoding.UTF8.GetBytes(content))
+                sr.Close()
+                fs.Dispose()
+            else
+                let fs = File.Create(filepath)
+                file.CopyTo fs
+                fs.Dispose()
+            
             
     let persistDots (newDots: string list) (postId: string) =
         let dotsMaybe = 
@@ -205,7 +217,7 @@ module Posts =
         
         if DirectoryInfo(dir).Exists then
             match DirectoryInfo(dir).GetFiles() |> Array.tryHead with
-            | Some file -> Happy(Markdown.ToHtml(File.ReadAllText(file.FullName)))
+            | Some file -> Happy(File.ReadAllText(file.FullName))
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
