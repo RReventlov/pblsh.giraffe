@@ -18,7 +18,7 @@ open pblsh.Helper
 
 module Posts =
 
-    let postDir post = sprintf "%s/%O" postRoot post.Id
+    let postDir (post:PostInformation) = sprintf "%s/%O" postRoot post.Id
 
     let persistPost (post: Post) (files: IFormFileCollection) =
         let insertedRows =
@@ -80,6 +80,39 @@ module Posts =
         })
             .Result
         |> List.ofSeq
+    
+    type GetCommentError =
+        | CommentNotFound
+        | CommentCouldNotBeCreated
+    
+    let RepliesFor commentId =
+        (selectTask HydraReader.Read createDbx {
+            for c in comments do
+                where (c.Parent = commentId)
+                select c.Id
+        })
+            .Result
+        |> List.ofSeq  
+    
+    let rec getComment id =
+        task {
+            let! opt =
+                selectTask HydraReader.Read createDbx {
+                    for c in comments do
+                        join u in AspNetUsers on (c.Author = u.Id)
+                        where (c.Id = id)
+                        select (c.Id,u.UserName,c.Author,c.Content,c.Parent,c.PostId)
+                        tryHead
+                }
+            
+            return
+                match opt with
+                | Some (cid, author, authorId, content, parentId, postId) ->  
+                    match CommentInformation.create id author authorId content parentId postId (RepliesFor cid) with
+                    | Happy ci -> Happy ci
+                    | Sad _ -> Sad(CommentCouldNotBeCreated)
+                | None -> Sad(CommentNotFound)
+        }      
 
     let createPostInformation ((id, author, authorId, title): string * string * string * string) =
         PostInformation.create id author authorId title (dotsFor id)
@@ -166,7 +199,7 @@ module Posts =
                |> List.ofSeq
         }
         
-    let getContent id =
+    let getContent (id:PostInformation) =
         let dir = postDir id
         
         if DirectoryInfo(dir).Exists then
@@ -175,6 +208,51 @@ module Posts =
             | None -> Sad "couldn't read file"
         else
             Sad "couldn't find file"
+            
+
+    let postComment (comment: NewComment) (postId: Guid) (authorIdStr: string) =
+        Console.WriteLine((sprintf "inserting %s" comment.Content))
+        let idStr = postId.ToString()
+        let newId = Guid.NewGuid()
+        let newIdStr= newId.ToString()
+        let insertTask = insertTask createDbx {
+            into comments
+            entity {
+                comments.Author = authorIdStr
+                comments.PostId = idStr 
+                comments.Id = newIdStr
+                comments.Content = comment.Content
+                comments.Parent = comment.Parent.ToString()
+            }
+        }
+        insertTask.Result |> ignore
+        newId
+        
+    let getComments (id:Guid) =
+        let idStr = id.ToString()
+        let emptyIdStr = Guid.Empty.ToString()
+        task {
+            let! selectedArticles =
+                selectTask HydraReader.Read createDbx {
+                    for c in comments do
+                        where (c.PostId = idStr && c.Parent = emptyIdStr)
+                        select c.Id
+                }
+            return selectedArticles
+               |> Seq.map (getComment >> await)
+               |> Seq.filter filterHappy
+               |> Seq.map(fun path ->
+                   match path with //Sad Case wont happen
+                   | Happy s -> s)
+               |> List.ofSeq
+        }
+    
+    let getReplies replyInfo =
+        replyInfo |> List.map (getComment >> await)
+        |> List.filter (filterHappy)
+        |> List.map (fun r -> match r with //sad Case wont happen
+                              |Happy r -> r)
+     
     
 module Users =
     let getUser (pId: Guid) =

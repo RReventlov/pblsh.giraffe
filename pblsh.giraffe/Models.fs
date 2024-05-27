@@ -11,6 +11,9 @@ let parseToGuid (str: string) =
     with
     | :? System.FormatException as e -> Sad e.Message
     | _ -> Sad(sprintf "unknown error parsing %s to guid" str)
+    
+let parseToPath obj =
+    Happy(obj)
 
 module Forms =
     [<CLIMutable>]
@@ -24,6 +27,12 @@ module Forms =
 
     [<CLIMutable>]
     type NewPostInfo = { Title: string; Dots: string }
+    
+    [<CLIMutable>]
+    type NewComment = {
+        Content:string;
+        Parent:Guid
+    }
     
     [<CLIMutable>]
     type SearchContent = { Query: string }
@@ -84,6 +93,47 @@ type PostInformation =
       AuthorId: Guid
       Title: String1
       Dots: Dot list }
+    
+type CommentInformation =
+    {
+        Id: Guid
+        Author: String1
+        AuthorId: Guid
+        Content: String1
+        Parent: Guid
+        PostId: Guid
+        Replies: string list
+    }    
+    
+module CommentInformation =
+    
+    type CommentInformationError =
+        | AuthorTooShort of string
+        | UnknownIdFormat of string
+        | ContentTooShort of string
+        | RepliesTooShort of string list
+        
+    
+    let create uncheckedId uncheckedAuthor uncheckedAuthorId uncheckedContent uncheckedParentId uncheckedPostId uncheckedReplies =
+        path {
+            let! id = parseToGuid uncheckedId <|? UnknownIdFormat
+            let! author = String1.create uncheckedAuthor |> mapR <|? AuthorTooShort
+            let! authorId = parseToGuid uncheckedAuthorId <|? UnknownIdFormat
+            let! content = String1.create uncheckedContent |> mapR <|? ContentTooShort
+            let! parentId = parseToGuid uncheckedParentId <|? UnknownIdFormat
+            let! postId = parseToGuid uncheckedPostId <|? UnknownIdFormat
+            let! replies = parseToPath uncheckedReplies <|? RepliesTooShort
+            return
+                {
+                    Id = id
+                    Author = author 
+                    AuthorId = authorId
+                    Content = content
+                    Parent = parentId
+                    PostId = postId
+                    Replies = replies
+                }
+        }
 
 module PostInformation =
 

@@ -149,17 +149,34 @@ let getUserById (id: Guid) : HttpHandler =
         let articles = Posts.getPostsByAuthor id |> await
         let view = Views.userView user userInfo articles
         htmlView view next ctx
-
+        
+let postComment (postId:Guid) : HttpHandler =
+    fun next ctx -> task {
+        let! comment = ctx.TryBindFormAsync<NewComment>()
+        let userManager = ctx.GetService<UserManager<IdentityUser>>()
+        let authorId = userManager.GetUserId(ctx.User)
+        
+        match mapR comment with
+        | Happy comment ->
+            Console.WriteLine(comment.Parent.ToString())
+            let newId = Posts.postComment comment postId authorId
+            let redirectId = if comment.Parent.Equals Guid.Empty then newId else comment.Parent
+            return! redirectTo true (sprintf "/posts/%O#%O" postId redirectId) next ctx
+                
+        | Sad _ ->
+            return! htmlView (Views.errorWithRedirect "") next ctx
+    }
+        
 let getPost (id: Guid) : HttpHandler =
     fun next ctx ->
         let post = Posts.getPost id |> await
         let user = getUserOption ctx
-
+        let comments = Posts.getComments id |> await
         match post with
         | Happy postInfo ->
             let content = Posts.getContent postInfo
             match content with
-            | Happy content -> htmlView (Views.post user postInfo content) next ctx
+            | Happy content -> htmlView (Views.post user postInfo content comments) next ctx
             | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
         | Sad _ -> htmlView (Views.errorWithRedirect "") next ctx
         

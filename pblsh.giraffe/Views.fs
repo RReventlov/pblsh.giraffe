@@ -118,7 +118,7 @@ let newPost userInfo (errors: string list) =
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"
 
-let post userInfo postInfo content =
+let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
     [ accountTopRow userInfo
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -134,8 +134,26 @@ let post userInfo postInfo content =
                 [ encodedText "Written by "
                   a [ _id "author-url"; _href (Urls.userUrl postInfo) ] [ encodedText (String1.value postInfo.Author) ] ]
             div [ _id "dot-list" ] (postInfo.Dots |> List.map dot)
-            div [] [ rawText content ] ] ]
-    |> titledLayoutCss [ "pblsh.css"; "post.css" ] (String1.value postInfo.Title)
+            div [] [ rawText content ]
+            div [ _class "comments" ] [
+                div [ _class "commentsMetaData" ] [
+                    
+                    span [] [
+                        h3 [ _class "Headline"] [ encodedText "Comment Section" ]
+                        match userInfo with
+                        | Some _ ->
+                            input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action" ]
+                            div [ _style "display:none"; _id "newComment" ] [
+                                    newCommentDialog postInfo.Id
+                            ]
+                        | None -> p [] [encodedText "You need to Sign in to write a comment"]    
+                    ]
+                    p [ _class "commentAmount" ] [encodedText (sprintf "%d Results found" comments.Length)]
+                ]
+                
+                div [] (comments |> List.map (fun c -> commentCard c userInfo))
+            ] ] ]
+    |> titledLayoutCssJs [ "pblsh.css"; "post.css" ] ["post.js"] (String1.value postInfo.Title)
 
 
 let search (userInfo: UserInfo option) (query: string) (results: PostInformation list) =
