@@ -103,7 +103,7 @@ let replyForm (commentInfo:CommentInformation) =
         
 let rec commentCard commentInfo (userInfo:UserInfo option) =
     div
-        [ _class "commentcard"; ]
+        [ _class "commentcard"; _id(commentInfo.Id.ToString()) ]
         [
           span [ _class "commentHeader" ] [
             p
@@ -125,14 +125,12 @@ let rec commentCard commentInfo (userInfo:UserInfo option) =
                       replyForm commentInfo
                    ]
               |None -> p [] [ encodedText "You need to Sign in to reply"]     
-              div [_class "replies"] (commentInfo.Replies |> List.map (Posts.getComment >> await) |> List.filter filterHappy |> List.map(fun path ->
-                           match path with //Sad Case wont happen
-                           | Happy s -> s)|> List.map (fun c -> commentCard c userInfo) )
+              div [_class "replies"] ((Posts.getReplies commentInfo.Replies) |> List.map(fun c -> commentCard c userInfo ))
           ]
     ]
 
 let newCommentDialog (id:Guid) =
-    form [ _action (sprintf "/posts/%O/comments" id); _method "post" ] [
+    form [ _action (sprintf "/posts/%O/comments" id ); _method "post" ] [
         textarea [_name "Content" ;_rows "5"; _cols "20"] []
         input [ _type "hidden"; _name "Parent"; _value(Guid.Empty.ToString()); ]
         br []

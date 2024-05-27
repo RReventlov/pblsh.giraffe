@@ -213,17 +213,20 @@ module Posts =
     let postComment (comment: NewComment) (postId: Guid) (authorIdStr: string) =
         Console.WriteLine((sprintf "inserting %s" comment.Content))
         let idStr = postId.ToString()
+        let newId = Guid.NewGuid()
+        let newIdStr= newId.ToString()
         let insertTask = insertTask createDbx {
             into comments
             entity {
                 comments.Author = authorIdStr
                 comments.PostId = idStr 
-                comments.Id = Guid.NewGuid().ToString()
+                comments.Id = newIdStr
                 comments.Content = comment.Content
                 comments.Parent = comment.Parent.ToString()
             }
         }
         insertTask.Result |> ignore
+        newId
         
     let getComments (id:Guid) =
         let idStr = id.ToString()
@@ -243,7 +246,12 @@ module Posts =
                    | Happy s -> s)
                |> List.ofSeq
         }
-        
+    
+    let getReplies replyInfo =
+        replyInfo |> List.map (getComment >> await)
+        |> List.filter (filterHappy)
+        |> List.map (fun r -> match r with //sad Case wont happen
+                              |Happy r -> r)
      
     
 module Users =

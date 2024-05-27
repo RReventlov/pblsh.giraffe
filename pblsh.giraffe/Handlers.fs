@@ -150,7 +150,7 @@ let getUserById (id: Guid) : HttpHandler =
         let view = Views.userView user userInfo articles
         htmlView view next ctx
         
-let postComment (id:Guid) : HttpHandler =
+let postComment (postId:Guid) : HttpHandler =
     fun next ctx -> task {
         let! comment = ctx.TryBindFormAsync<NewComment>()
         let userManager = ctx.GetService<UserManager<IdentityUser>>()
@@ -159,8 +159,10 @@ let postComment (id:Guid) : HttpHandler =
         match mapR comment with
         | Happy comment ->
             Console.WriteLine(comment.Parent.ToString())
-            Posts.postComment comment id authorId
-            return! redirectTo true (sprintf "/posts/%O" id) next ctx
+            let newId = Posts.postComment comment postId authorId
+            let redirectId = if comment.Parent.Equals Guid.Empty then newId else comment.Parent
+            return! redirectTo true (sprintf "/posts/%O#%O" postId redirectId) next ctx
+                
         | Sad _ ->
             return! htmlView (Views.errorWithRedirect "") next ctx
     }
