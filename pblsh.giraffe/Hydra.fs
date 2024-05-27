@@ -126,6 +126,16 @@ module main =
     let __EFMigrationsHistory = table<__EFMigrationsHistory>
 
     [<CLIMutable>]
+    type comments =
+        { Id: string
+          Content: string
+          Author: string
+          Parent: string
+          PostId: string }
+
+    let comments = table<comments>
+
+    [<CLIMutable>]
     type dots = { Dot: string; UsedBy: string }
 
     let dots = table<dots>
@@ -282,6 +292,24 @@ module main =
             member __.ReadIfNotNull() =
                 if __.MigrationId.IsNull() then None else Some(__.Read())
 
+        type commentsReader(reader: System.Data.Common.DbDataReader, getOrdinal) =
+            member __.Id = RequiredColumn(reader, getOrdinal, reader.GetString, "Id")
+            member __.Content = RequiredColumn(reader, getOrdinal, reader.GetString, "Content")
+            member __.Author = RequiredColumn(reader, getOrdinal, reader.GetString, "Author")
+            member __.Parent = RequiredColumn(reader, getOrdinal, reader.GetString, "Parent")
+            member __.PostId = RequiredColumn(reader, getOrdinal, reader.GetString, "PostId")
+
+            member __.Read() =
+                { Id = __.Id.Read()
+                  Content = __.Content.Read()
+                  Author = __.Author.Read()
+                  Parent = __.Parent.Read()
+                  PostId = __.PostId.Read() }
+                : comments
+
+            member __.ReadIfNotNull() =
+                if __.Id.IsNull() then None else Some(__.Read())
+
         type dotsReader(reader: System.Data.Common.DbDataReader, getOrdinal) =
             member __.Dot = RequiredColumn(reader, getOrdinal, reader.GetString, "Dot")
             member __.UsedBy = RequiredColumn(reader, getOrdinal, reader.GetString, "UsedBy")
@@ -331,6 +359,7 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
     let lazymainAspNetUserTokens = lazy (main.Readers.AspNetUserTokensReader(reader, buildGetOrdinal 4))
     let lazymainAspNetUsers = lazy (main.Readers.AspNetUsersReader(reader, buildGetOrdinal 15))
     let lazymain__EFMigrationsHistory = lazy (main.Readers.__EFMigrationsHistoryReader(reader, buildGetOrdinal 2))
+    let lazymaincomments = lazy (main.Readers.commentsReader(reader, buildGetOrdinal 5))
     let lazymaindots = lazy (main.Readers.dotsReader(reader, buildGetOrdinal 2))
     let lazymainposts = lazy (main.Readers.postsReader(reader, buildGetOrdinal 4))
     member __.``main.AspNetRoleClaims`` = lazymainAspNetRoleClaims.Value
@@ -341,6 +370,7 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
     member __.``main.AspNetUserTokens`` = lazymainAspNetUserTokens.Value
     member __.``main.AspNetUsers`` = lazymainAspNetUsers.Value
     member __.``main.__EFMigrationsHistory`` = lazymain__EFMigrationsHistory.Value
+    member __.``main.comments`` = lazymaincomments.Value
     member __.``main.dots`` = lazymaindots.Value
     member __.``main.posts`` = lazymainposts.Value
     member private __.AccFieldCount with get () = accFieldCount and set (value) = accFieldCount <- value
@@ -363,6 +393,8 @@ type HydraReader(reader: System.Data.Common.DbDataReader) =
         | "main.AspNetUsers", true -> __.``main.AspNetUsers``.ReadIfNotNull >> box
         | "main.__EFMigrationsHistory", false -> __.``main.__EFMigrationsHistory``.Read >> box
         | "main.__EFMigrationsHistory", true -> __.``main.__EFMigrationsHistory``.ReadIfNotNull >> box
+        | "main.comments", false -> __.``main.comments``.Read >> box
+        | "main.comments", true -> __.``main.comments``.ReadIfNotNull >> box
         | "main.dots", false -> __.``main.dots``.Read >> box
         | "main.dots", true -> __.``main.dots``.ReadIfNotNull >> box
         | "main.posts", false -> __.``main.posts``.Read >> box
