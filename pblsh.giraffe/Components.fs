@@ -79,66 +79,68 @@ let dot dot =
 let postCard postInfo =
     div
         [ _class "postcard" ]
-        [ h2
-              []
-              [ a
-                    [ _href (Urls.postUrl postInfo) ]
-                    [ encodedText (String1.value postInfo.Title) ] ]
+        [ h2 [] [ a [ _href (Urls.postUrl postInfo) ] [ encodedText (String1.value postInfo.Title) ] ]
           div
               []
               [ span [] [ encodedText "Written by " ]
-                a [ _href (Urls.userUrl postInfo); _class "postcard-author" ] [ encodedText (String1.value postInfo.Author) ] ]
+                a
+                    [ _href (Urls.userUrl postInfo); _class "postcard-author" ]
+                    [ encodedText (String1.value postInfo.Author) ] ]
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
-        
-let replyForm (commentInfo:CommentInformation) =
-    form [ _action (sprintf "/posts/%O/comments" commentInfo.PostId); _method "post"; _style "display:none" ] [
-        textarea [_name "Content" ;_rows "5"; _cols "20"] []
-        input [ _type "hidden"; _name "Parent"; _value(commentInfo.Id.ToString()); ]
-        br []
-        span [_class "Buttons"] [
-            input [ _type "submit"; _value "Submit"; _class "filled-action"]
-            input [ _type "reset"; _value "Reset"; _class "warned-action" ]
-        ]
-    ]
-        
-let rec commentCard commentInfo (userInfo:UserInfo option) =
-    div
-        [ _class "commentcard"; _id(commentInfo.Id.ToString()) ]
-        [
-          span [ _class "commentHeader" ] [
-            p
-                []
-                [
-                    a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText  (String1.value commentInfo.Author) ]
-                ]
-            input [ _type "Button"; _class "filled-action-slim showButton"; _value "Show"; _style "display:none" ]
-          ]
-          div [ _class "comment" ] [
-              input [ _type "Button"; _value "Hide"; _class "filled-action-slim hideButton" ]
-              div [ _class "content" ] [
-                  rawText  (String1.value commentInfo.Content)
-              ]
-              match userInfo with
-              |Some _ ->
-                   span [ _class "interactions" ] [
-                      input [ _type "button"; _class "filled-action-slim replyButton"; _value "reply" ]
-                      replyForm commentInfo
-                   ]
-              |None -> p [] [ encodedText "You need to Sign in to reply"]     
-              div [_class "replies"] ((Posts.getReplies commentInfo.Replies) |> List.map(fun c -> commentCard c userInfo ))
-          ]
-    ]
 
-let newCommentDialog (id:Guid) =
-    form [ _action (sprintf "/posts/%O/comments" id ); _method "post" ] [
-        textarea [_name "Content" ;_rows "5"; _cols "20"] []
-        input [ _type "hidden"; _name "Parent"; _value(Guid.Empty.ToString()); ]
-        br []
-        span [_class "Buttons"] [
-            input [ _type "submit"; _value "Submit"; _class "filled-action"]
-            input [ _type "reset"; _value "Reset"; _class "warned-action" ]
-        ]
-    ]
+let replyForm (commentInfo: CommentInformation) =
+    form
+        [ _action (sprintf "/posts/%O/comments" commentInfo.PostId)
+          _method "post"
+          _style "display:none" ]
+        [ textarea [ _name "Content"; _rows "5"; _cols "20" ] []
+          input [ _type "hidden"; _name "Parent"; _value (commentInfo.Id.ToString()) ]
+          br []
+          span
+              [ _class "Buttons" ]
+              [ input [ _type "submit"; _value "Submit"; _class "filled-action" ]
+                input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ]
+
+let rec commentCard commentInfo (userInfo: UserInfo option) =
+    div
+        [ _class "commentcard"; _id (commentInfo.Id.ToString()) ]
+        [ span
+              [ _class "commentHeader" ]
+              [ p
+                    []
+                    [ a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText (String1.value commentInfo.Author) ] ]
+                input
+                    [ _type "Button"
+                      _class "filled-action-slim showButton"
+                      _value "Show"
+                      _style "display:none" ] ]
+          div
+              [ _class "comment" ]
+              [ input [ _type "Button"; _value "Hide"; _class "filled-action-slim hideButton" ]
+                div [ _class "content" ] [ rawText (String1.value commentInfo.Content) ]
+                match userInfo with
+                | Some _ ->
+                    span
+                        [ _class "interactions" ]
+                        [ input [ _type "button"; _class "filled-action-slim replyButton"; _value "reply" ]
+                          replyForm commentInfo ]
+                | None -> p [] [ encodedText "You need to Sign in to reply" ]
+                div
+                    [ _class "replies" ]
+                    ((Posts.getReplies commentInfo.Replies)
+                     |> List.map (fun c -> commentCard c userInfo)) ] ]
+
+let newCommentDialog (id: Guid) =
+    form
+        [ _action (sprintf "/posts/%O/comments" id); _method "post" ]
+        [ textarea [ _name "Content"; _rows "5"; _cols "20" ] []
+          input [ _type "hidden"; _name "Parent"; _value (Guid.Empty.ToString()) ]
+          br []
+          span
+              [ _class "Buttons" ]
+              [ input [ _type "submit"; _value "Submit"; _class "filled-action" ]
+                input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ]
+
 let dialogCssJs (cssFiles: string list) (jsFiles: string list) (pageTitle: string) (content: XmlNode list) =
     [ emptyTopRow (); main [ _class "shiny" ] [ div [ _id "center" ] content ] ]
     |> titledLayoutCssJs ("dialog.css" :: cssFiles) ("mousetracker.js" :: jsFiles) pageTitle
