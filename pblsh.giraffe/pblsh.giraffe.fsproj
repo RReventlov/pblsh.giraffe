@@ -4,6 +4,7 @@
         <AssemblyName>pblsh.giraffe.App</AssemblyName>
         <EnableDefaultContentItems>false</EnableDefaultContentItems>
         <UserSecretsId>f9f0c142-4bcc-46dd-90aa-22bfc11761bb</UserSecretsId>
+        <AspNetCoreModuleName>AspNetCoreModuleV2</AspNetCoreModuleName>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
     <ItemGroup>
@@ -54,6 +55,7 @@
         <Content Include="..\.dockerignore">
           <Link>.dockerignore</Link>
         </Content>
+        <Content Include="pblsh.db" />
         <Content Include="appsettings.json" />
         <Content Include="appsettings.development.json" />
         <Content Include="Dockerfile" />
