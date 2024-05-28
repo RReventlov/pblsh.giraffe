@@ -16,6 +16,11 @@ let filterHappy path =
     | Happy h -> true
     | Sad _ -> false
 
+let chooseHappy path =
+    match path with
+    | Happy h -> Some h
+    | Sad _ -> None
+
 let bind fn input =
     match input with
     | Happy s -> fn s

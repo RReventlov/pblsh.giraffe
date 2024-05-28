@@ -187,10 +187,7 @@ module Posts =
             return
                 selectedArticles
                 |> Seq.map (getPost >> await)
-                |> Seq.filter filterHappy
-                |> Seq.map (fun path ->
-                    match path with //Sad Case wont happen
-                    | Happy s -> s)
+                |> Seq.choose chooseHappy
                 |> List.ofSeq
         }
 
@@ -207,10 +204,7 @@ module Posts =
             return
                 selectedArticles
                 |> Seq.map (getPost >> await)
-                |> Seq.filter filterHappy
-                |> Seq.map (fun path ->
-                    match path with //Sad Case wont happen
-                    | Happy s -> s)
+                |> Seq.choose chooseHappy
                 |> List.ofSeq
         }
 
@@ -262,20 +256,12 @@ module Posts =
             return
                 selectedArticles
                 |> Seq.map (getComment >> await)
-                |> Seq.filter filterHappy
-                |> Seq.map (fun path ->
-                    match path with //Sad Case wont happen
-                    | Happy s -> s)
+                |> Seq.choose chooseHappy
                 |> List.ofSeq
         }
 
     let getReplies replyInfo =
-        replyInfo
-        |> List.map (getComment >> await)
-        |> List.filter (filterHappy)
-        |> List.map (fun r ->
-            match r with //sad Case wont happen
-            | Happy r -> r)
+        replyInfo |> List.map (getComment >> await) |> List.choose chooseHappy
 
 
 module Users =
@@ -324,9 +310,6 @@ module Search =
             return
                 fittingPosts
                 |> Seq.map (Posts.getPost >> await)
-                |> Seq.filter filterHappy
-                |> Seq.map (fun path ->
-                    match path with //Sad Case wont happen
-                    | Happy s -> s)
+                |> Seq.choose chooseHappy
                 |> List.ofSeq
         }

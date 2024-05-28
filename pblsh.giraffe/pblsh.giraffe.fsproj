@@ -3,6 +3,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <AssemblyName>pblsh.giraffe.App</AssemblyName>
         <EnableDefaultContentItems>false</EnableDefaultContentItems>
+        <UserSecretsId>f9f0c142-4bcc-46dd-90aa-22bfc11761bb</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
@@ -22,10 +24,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
         <PackageReference Include="SqlHydra.Query" Version="2.4.1" />
         <PackageReference Include="SQLProvider" Version="1.3.36" />
         <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+        <PackageReference Update="FSharp.Core" Version="8.0.100" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Hydra.fs">
@@ -36,7 +40,7 @@
         <Compile Include="Paths.fs" />
         <Compile Include="Configuration.fs" />
         <Compile Include="Models.fs" />
-        <Compile Include="Parser.fs"/>
+        <Compile Include="Parser.fs" />
         <Compile Include="DataAccess.fs" />
         <Compile Include="Migrations/*.fs" />
         <Compile Include="Workflows.fs" />
@@ -49,6 +53,7 @@
     <ItemGroup>
         <Content Include="appsettings.json" />
         <Content Include="appsettings.development.json" />
+        <None Include="Dockerfile" />
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

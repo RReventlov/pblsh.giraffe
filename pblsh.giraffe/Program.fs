@@ -113,7 +113,9 @@ let configureLogging (builder: ILoggingBuilder) =
 
 [<EntryPoint>]
 let main args =
-
+    printfn "WebRoot: %s" webRoot
+    printfn "ContentRoot: %s" contentRoot
+    
     Host
         .CreateDefaultBuilder(args)
         .ConfigureAppConfiguration(configureAppConfiguration)
