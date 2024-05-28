@@ -51,9 +51,12 @@
         <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
+        <Content Include="..\.dockerignore">
+          <Link>.dockerignore</Link>
+        </Content>
         <Content Include="appsettings.json" />
         <Content Include="appsettings.development.json" />
-        <None Include="Dockerfile" />
+        <Content Include="Dockerfile" />
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
