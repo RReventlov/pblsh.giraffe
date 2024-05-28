@@ -7,3 +7,4 @@ riderModule.iml
 pblsh.giraffe/appsettings.development.json
 pblsh.db
 pblsh.posts/*
+.config/*
