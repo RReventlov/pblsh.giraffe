@@ -1,14 +1,11 @@
 module pblsh.DataAccess
 
 open Microsoft.AspNetCore.Identity.EntityFrameworkCore
-open Microsoft.Data.SqlClient
 open Microsoft.Data.Sqlite
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Design
 open SqlHydra.Query
 open pblsh.Configuration
-open pblsh.Hydra
-open pblsh.Hydra.main
 
 
 type ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>) =

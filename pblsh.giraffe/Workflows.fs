@@ -18,8 +18,11 @@ open pblsh.Models.Forms
 open pblsh.Helper
 open FSharp.Formatting.Markdown
 
-module Posts =
+// Disable warnings coming from the InsertTaskBuilder
+#nowarn "3391"
 
+module Posts =
+    
     let postDir (post: PostInformation) = sprintf "%s/%O" postRoot post.Id
 
     let persistPost (post: Post) (files: IFormFileCollection) =
