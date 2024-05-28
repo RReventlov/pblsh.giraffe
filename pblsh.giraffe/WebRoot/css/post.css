@@ -27,6 +27,20 @@ main {
     flex-direction: row;
 }
 
+.comment-new-container {
+    display: flex;
+}
+
+.comment-new-login, .comment-new-open, .comment-reply-open, .comment-reply-login {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+}
+
+.comment-new-login > img, .comment-new-open > img {
+    filter: brightness(0) invert(1);
+}
+
 .comment-card > p {
     margin: .75rem 0;
 }
@@ -36,12 +50,6 @@ main {
     flex-direction: row;
     gap: .5rem;
     align-items: center;
-}
-
-.comment-reply-open, .comment-reply-login {
-    display: flex;
-    flex-direction: row;
-    gap: .5rem;
 }
 
 .comment-reply-container {

@@ -66,7 +66,7 @@ let signUpComplete () =
             ] ]
     |> dialog "pblsh.confirm"
 
-let me (userInfo:UserInfo) (*(articles:PostInformation list)*)=
+let me (userInfo: UserInfo) (*(articles:PostInformation list)*) =
     [ accountTopRow (Some userInfo)
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -118,7 +118,16 @@ let newPost userInfo (errors: string list) =
                         input [ _type "reset"; _value "Reset"; _class "warned-action" ] ] ] ] ]
     |> titledLayoutCss [ "post.new.css" ] "New post"
 
-let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
+let post (userInfo: UserInfo option) (postInfo: PostInformation) content (comments: 'a list) =
+    let replyButton =
+        match userInfo with
+        | None ->
+            a
+                [ _type "button"
+                  _href (Urls.loginWithRedirect (sprintf "/posts/%O" postInfo.Id))
+                  _class "comment-new-login filled-action" ]
+        | Some _ -> button [ _type "button"; _class "comment-new-open comment-open-reply-box filled-action" ]
+
     [ accountTopRow userInfo
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -135,25 +144,24 @@ let post userInfo (postInfo:PostInformation) content (comments: 'a list) =
                   a [ _id "author-url"; _href (Urls.userUrl postInfo) ] [ encodedText (String1.value postInfo.Author) ] ]
             div [ _id "dot-list" ] (postInfo.Dots |> List.map dot)
             div [] [ rawText content ]
-            div [ _class "comments" ] [
-                div [ _class "commentsMetaData" ] [
-                    
-                    span [] [
-                        h3 [ _class "Headline"] [ encodedText "Comment Section" ]
+            div
+                [ _class "comments" ]
+                [ div
+                      [ _class "comment-information" ]
+                      [ h3 [] [ encodedText "Comment Section" ]
+                        p [] [ encodedText (sprintf "%d Results found" comments.Length) ]
+                        p
+                            [ _class "comment-new-container" ]
+                            [ replyButton [ encodedText "Reply"; img [ _src "/icons/chat-dots.svg" ] ] ]
                         match userInfo with
-                        | Some _ ->
-                            input [_id "writeComment";_type "button"; _value "Write Comment"; _class "filled-action" ]
-                            div [ _style "display:none"; _id "newComment" ] [
-                                    newCommentDialog postInfo.Id
-                            ]
-                        | None -> p [] [encodedText "You need to Sign in to write a comment"]    
-                    ]
-                    p [ _class "commentAmount" ] [encodedText (sprintf "%d Results found" comments.Length)]
-                ]
-                
-                div [] (comments |> List.map (fun c -> commentCard c userInfo))
-            ] ] ]
-    |> titledLayoutCssJs [ "pblsh.css"; "post.css" ] ["post.js"] (String1.value postInfo.Title)
+                        | None -> div [] []
+                        | Some _ -> replyContainer (sprintf "/posts/%O/comments/%O" postInfo.Id System.Guid.Empty) ]
+
+                  div
+                      []
+                      (comments
+                       |> List.map (fun commentInformation -> commentCard commentInformation userInfo)) ] ] ]
+    |> titledLayoutCssJs [ "pblsh.css"; "post.css" ] [ "post.js" ] (String1.value postInfo.Title)
 
 
 let search (userInfo: UserInfo option) (query: string) (results: PostInformation list) =
@@ -175,30 +183,26 @@ let search (userInfo: UserInfo option) (query: string) (results: PostInformation
                               span [ _class "query" ] [ encodedText query ]
                               encodedText "\"" ] ]
                   div [ _class "countDisplay" ] [ encodedText (sprintf "%d Results found" results.Length) ] ]
-            div [] (results |> List.map postCard)    
-            ] ]
+            div [] (results |> List.map postCard) ] ]
     |> titledLayoutCss [ "index.css"; "search.css" ] "Search"
-    
+
 let userView (curUserInfo: UserInfo option) (reqUserInfo: UserInfo) (articles: PostInformation list) =
-    [
-        accountTopRow curUserInfo
-        navigation
+    [ accountTopRow curUserInfo
+      navigation
           [ { Text = "Home"; Link = "/index" }
             { Text = "Users"; Link = "/users" }
-            { Text = reqUserInfo.UserName; Link = "#" }
-          ]
-        main
+            { Text = reqUserInfo.UserName
+              Link = "#" } ]
+      main
           []
-          [
-            h1 [] [ encodedText (reqUserInfo.UserName) ]
-            div [ _class "writtenArticles"] [
-                h1 [] [encodedText "Articles written by User"]
-                div [] (articles |> List.map postCard)
-            ]
-          ] 
-    ] |> titledLayoutCss ["index.css"] reqUserInfo.UserName
-    
-let dotView (userInfo: UserInfo option) (dot:string) (results: PostInformation list) =
+          [ h1 [] [ encodedText (reqUserInfo.UserName) ]
+            div
+                [ _class "writtenArticles" ]
+                [ h1 [] [ encodedText "Articles written by User" ]
+                  div [] (articles |> List.map postCard) ] ] ]
+    |> titledLayoutCss [ "index.css" ] reqUserInfo.UserName
+
+let dotView (userInfo: UserInfo option) (dot: string) (results: PostInformation list) =
     [ accountTopRow userInfo
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -217,6 +221,5 @@ let dotView (userInfo: UserInfo option) (dot:string) (results: PostInformation l
                               span [ _class "query" ] [ encodedText dot ]
                               encodedText "\"" ] ]
                   div [ _class "countDisplay" ] [ encodedText (sprintf "%d Results found" results.Length) ] ]
-            div [] (results |> List.map postCard)    
-            ] ]
-    |> titledLayoutCss [ "index.css"; "search.css" ] dot    
+            div [] (results |> List.map postCard) ] ]
+    |> titledLayoutCss [ "index.css"; "search.css" ] dot

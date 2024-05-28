@@ -10,7 +10,7 @@ toggleReplies.forEach((btn) => {
     })
 })
 
-const openReplyBox = document.querySelectorAll(".comment-reply-open")
+const openReplyBox = document.querySelectorAll(".comment-open-reply-box")
 const replyBox = document.querySelectorAll(".comment-reply-container")
 const closeReplyBox = document.querySelectorAll(".comment-reply-cancel")
 

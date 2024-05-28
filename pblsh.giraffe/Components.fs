@@ -88,23 +88,23 @@ let postCard postInfo =
                     [ encodedText (String1.value postInfo.Author) ] ]
           div [ _class "postcard-tags" ] [ yield! postInfo.Dots |> List.map dot ] ]
 
-let replyContainer (commentInfo: CommentInformation) (userInfo: UserInfo option) =
+let replyContainer (actionUrl: string) =
+    form
+        [ _class "comment-reply-container"; _action actionUrl; _method "post" ]
+        [ textarea [ _name "Content" ] []
+          div
+              [ _class "comment-reply-actions" ]
+              [ button
+                    [ _class "comment-reply-send transparent-action" ]
+                    [ encodedText "Send "; img [ _src "/icons/send.svg" ] ]
+                button
+                    [ _class "comment-reply-cancel transparent-action"; _type "button" ]
+                    [ encodedText "Cancel"; img [ _src "/icons/slash-circle.svg" ] ] ] ]
+
+let replyToComment (commentInfo: CommentInformation) (userInfo: UserInfo option) =
     match userInfo with
     | None -> div [] []
-    | Some _ ->
-        form
-            [ _class "comment-reply-container"
-              _action (sprintf "/posts/%O/comments/%O" commentInfo.PostId commentInfo.Id)
-              _method "post" ]
-            [ textarea [ _name "Content" ] []
-              div
-                  [ _class "comment-reply-actions" ]
-                  [ button
-                        [ _class "comment-reply-send transparent-action" ]
-                        [ encodedText "Send "; img [ _src "/icons/send.svg" ] ]
-                    button
-                        [ _class "comment-reply-cancel transparent-action"; _type "button" ]
-                        [ encodedText "Cancel"; img [ _src "/icons/slash-circle.svg" ] ] ] ]
+    | Some _ -> replyContainer (sprintf "/posts/%O/comments/%O" commentInfo.PostId commentInfo.Id)
 
 let rec commentCard (commentInfo: CommentInformation) (userInfo: UserInfo option) =
     let replyButton =
@@ -114,7 +114,10 @@ let rec commentCard (commentInfo: CommentInformation) (userInfo: UserInfo option
                 [ _type "button"
                   _href (Urls.loginWithRedirect (sprintf "/posts/%O%%23%O" commentInfo.PostId commentInfo.Id))
                   _class "comment-reply-login transparent-action-link" ]
-        | Some _ -> button [ _type "button"; _class "comment-reply-open transparent-action" ]
+        | Some _ ->
+            button
+                [ _type "button"
+                  _class "comment-reply-open comment-open-reply-box transparent-action" ]
 
     div
         [ _class "comment-card"; _id (commentInfo.Id.ToString()) ]
@@ -123,7 +126,7 @@ let rec commentCard (commentInfo: CommentInformation) (userInfo: UserInfo option
               [ a [ _href (Urls.userUrlComment commentInfo) ] [ encodedText (String1.value commentInfo.Author) ]
                 replyButton [ encodedText "Reply"; img [ _src "/icons/chat-dots.svg" ] ] ]
           p [ _class "comment-content" ] [ rawText (String1.value commentInfo.Content) ]
-          replyContainer commentInfo userInfo
+          replyToComment commentInfo userInfo
           if (commentInfo.Replies |> List.length) <> 0 then
               div
                   [ _class "comment-replies-container" ]
