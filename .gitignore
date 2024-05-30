@@ -5,6 +5,6 @@ riderModule.iml
 /_ReSharper.Caches/
 /.idea/
 pblsh.giraffe/appsettings.development.json
-pblsh.db
+pblsh-dev.db
 pblsh.posts/*
 .config/*
