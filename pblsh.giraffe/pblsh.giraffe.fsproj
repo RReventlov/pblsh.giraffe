@@ -56,7 +56,7 @@
           <Link>.dockerignore</Link>
         </Content>
         <Content Include="pblsh.db" />
-        <Content Include="appsettings.json" />
+        <Content Include="appsettings.json" CopyToOutputDirectory="Always"/>
         <Content Include="appsettings.development.json" />
         <Content Include="Dockerfile" />
         <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
