@@ -132,7 +132,7 @@ let postNewPost (newPostInfo: NewPostInfo) : HttpHandler =
 
             return!
                 match Posts.saveNewPost authorId newPostInfo.Title dots form.Files with
-                | Happy h -> redirectTo true (sprintf "/post/%s" (h.Id.ToString())) next ctx
+                | Happy h -> redirectTo true (sprintf "/posts/%s" (h.Id.ToString())) next ctx
                 | Sad s ->
                     let errors =
                         s
