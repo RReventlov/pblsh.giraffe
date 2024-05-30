@@ -55,6 +55,7 @@
         <Content Include="..\.dockerignore">
           <Link>.dockerignore</Link>
         </Content>
+        <Content Include="../pblsh.db" CopyToOutputDirectory="Always"/>
         <Content Include="appsettings.json" CopyToOutputDirectory="Always"/>
         <Content Include="appsettings.development.json" />
         <Content Include="Dockerfile" />
