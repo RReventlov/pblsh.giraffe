@@ -17,3 +17,4 @@ let configuration =
 let postRoot = configuration["postRoot"]
 
 let connectionString = configuration["connectionString"]
+printfn "%s" connectionString
