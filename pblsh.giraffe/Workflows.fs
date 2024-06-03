@@ -287,6 +287,22 @@ module Users =
                       Id = Guid.Parse(id) }
                 | None -> { UserName = ""; Id = Guid.Empty }
         }
+    let getUserIdByName (username:string) =
+        let normalizedUsername = username.ToUpper()
+        task{
+            let! selectTask =
+                selectTask HydraReader.Read createDbx {
+                    for u in AspNetUsers do
+                        where (u.NormalizedUserName = normalizedUsername)
+                        select u.Id
+                        tryHead
+                }
+                
+            return
+                match selectTask with
+                | Some id -> Guid.Parse(id) 
+                | None -> Guid.Empty
+        }
 
 module Search =
     let searchPosts (queryInfo: QueryInfo) =

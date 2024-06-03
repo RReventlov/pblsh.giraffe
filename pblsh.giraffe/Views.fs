@@ -35,7 +35,7 @@ let login (redirectAfterLogin: RedirectInfo option) =
             a [ _class "web-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
     |> dialogCss [ "login.css" ] "pblsh.login"
 
-let signup (errors:IdentityError List) =
+let signup (errors:string List) =
     [ form
           [ _action "signup"; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Sign up" ]
@@ -47,7 +47,7 @@ let signup (errors:IdentityError List) =
             input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]
             input [ _type "submit"; _value "Sign up"; _class "filled-action" ]
             for e in errors do
-                p [_class "Error"] [encodedText e.Description]
+                p [_class "Error"] [encodedText e]
           ]
       div
           []
@@ -71,7 +71,7 @@ let signUpComplete () =
             ] ]
     |> dialog "pblsh.confirm"
 
-let me (userInfo: UserInfo) (*(articles:PostInformation list)*) =
+let me (userInfo: UserInfo) (articles:PostInformation list) =
     [ accountTopRow (Some userInfo)
       navigation
           [ { Text = "Home"; Link = "/index" }
@@ -80,10 +80,10 @@ let me (userInfo: UserInfo) (*(articles:PostInformation list)*) =
       main
           []
           [ h1 [] [ encodedText (userInfo.UserName.ToUpper()) ]
-            (*div [ _class "writtenArticles"] [
-                h1 [] [encodedText "Articles written by User"]
+            div [ _class "writtenArticles"] [
+                h1 [] [encodedText "My Articles"]
                 div [] (articles |> List.map postCard)
-            ]*)
+            ]
             a [ _class "action"; _href "/account/logout" ] [ encodedText "Log out" ] ] ]
     |> titledLayout "pblsh.account"
 

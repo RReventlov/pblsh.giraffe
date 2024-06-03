@@ -6,6 +6,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http.Features
 open Microsoft.AspNetCore.Identity
 open Microsoft.AspNetCore.Http
+open Microsoft.EntityFrameworkCore.Metadata.Internal
 open pblsh.Hydra.main
 open pblsh.Models.Post
 open pblsh.Helper
@@ -83,11 +84,11 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
         task {
             let mutable view = Views.errorWithRedirect("account/signup")
             let userManager = ctx.GetService<UserManager<IdentityUser>>()
-            let passwordValidator = new PasswordValidator<IdentityUser>()
+            let passwordValidator = PasswordValidator<IdentityUser>()
             let passwordValidationResult = passwordValidator.ValidateAsync(userManager,null,uncheckedSignUpInfo.Password).Result
-            let passwordErrors = passwordValidationResult.Errors |> Seq.cast<IdentityError> |> List.ofSeq
-            
-            if passwordValidationResult.Succeeded then
+            let passwordErrors = passwordValidationResult.Errors |> Seq.cast<IdentityError> |> List.ofSeq |> List.map (_.Description)
+            let checkForUsername = Users.getUserIdByName(uncheckedSignUpInfo.UserName).Result
+            if passwordValidationResult.Succeeded && Guid.Empty.Equals checkForUsername then
                 
                 let user =
                     IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
@@ -100,7 +101,9 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
                     else
                         (Views.errorWithRedirect "/account/signup")
                     
-            else
+            else if Guid.Empty <> checkForUsername then
+                view <- Views.signup(["Duplicate Username"]@passwordErrors)
+            else    
                 view <- Views.signup(passwordErrors)
                
             return! (htmlView view) next ctx
@@ -109,10 +112,9 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
 let getAccount () : HttpHandler =
     fun next ctx ->
         let userInfo = getUser ctx
-        (*let userID = Users.getUserIDbyName(userInfo.UserName).Result
-        Console.WriteLine(userInfo.Id)
-        let articles = Posts.getPostsByAuthorId(userID).Result*)
-        htmlView (Views.me userInfo (*articles*) ) next ctx
+        let userID = Users.getUserIdByName(userInfo.UserName).Result
+        let articles = Posts.getPostsByAuthor(userID).Result
+        htmlView (Views.me userInfo articles ) next ctx
 
 let getLogout () : HttpHandler =
     fun next ctx ->
