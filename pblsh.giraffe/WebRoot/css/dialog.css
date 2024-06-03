@@ -62,6 +62,10 @@ input[type="submit"] {
     background: hsl(0, 0%, 95%);
 }
 
+.Error {
+    color: var(--warned-color)
+}
+
 .shiny::after {
     content: "";
     position: absolute;

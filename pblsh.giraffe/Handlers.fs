@@ -75,25 +75,34 @@ let postLogin (loginInfo: LoginInfo) : HttpHandler =
         }
 
 let getSignup () =
-    let view = Views.signup ()
+    let view = Views.signup ([])
     htmlView view
 
 let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
     fun next ctx ->
         task {
+            let mutable view = Views.errorWithRedirect("account/signup")
             let userManager = ctx.GetService<UserManager<IdentityUser>>()
+            let passwordValidator = new PasswordValidator<IdentityUser>()
+            let passwordValidationResult = passwordValidator.ValidateAsync(userManager,null,uncheckedSignUpInfo.Password).Result
+            let passwordErrors = passwordValidationResult.Errors |> Seq.cast<IdentityError> |> List.ofSeq
+            
+            if passwordValidationResult.Succeeded then
+                
+                let user =
+                    IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
 
-            let user =
-                IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
+                let! result = userManager.CreateAsync(user, uncheckedSignUpInfo.Password)
 
-            let! result = userManager.CreateAsync(user, uncheckedSignUpInfo.Password)
-
-            let view =
-                if result.Succeeded then
-                    Views.signUpComplete ()
-                else
-                    (Views.errorWithRedirect "/account/signup")
-
+                view <-
+                    if result.Succeeded then
+                        Views.signUpComplete ()
+                    else
+                        (Views.errorWithRedirect "/account/signup")
+                    
+            else
+                view <- Views.signup(passwordErrors)
+               
             return! (htmlView view) next ctx
         }
 

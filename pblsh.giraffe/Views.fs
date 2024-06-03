@@ -1,7 +1,9 @@
 ﻿module pblsh.Views
 
+open System.Collections
 open Giraffe.ViewEngine.Attributes
 open Giraffe.ViewEngine.HtmlElements
+open Microsoft.AspNetCore.Identity
 open pblsh.Components
 open pblsh.Models
 open pblsh.Models.QueryStrings
@@ -33,7 +35,7 @@ let login (redirectAfterLogin: RedirectInfo option) =
             a [ _class "web-link"; _href "/account/signup" ] [ encodedText "Sign up" ] ] ]
     |> dialogCss [ "login.css" ] "pblsh.login"
 
-let signup () =
+let signup (errors:IdentityError List) =
     [ form
           [ _action "signup"; _method "post"; _class "main-content" ]
           [ h1 [] [ encodedText "Sign up" ]
@@ -43,7 +45,10 @@ let signup () =
             input [ _id "password"; _type "password"; _name "password"; _placeholder "Password" ]
             label [ _for "username" ] [ encodedText "Username" ]
             input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]
-            input [ _type "submit"; _value "Sign up"; _class "filled-action" ] ]
+            input [ _type "submit"; _value "Sign up"; _class "filled-action" ]
+            for e in errors do
+                p [_class "Error"] [encodedText e.Description]
+          ]
       div
           []
           [ span [] [ encodedText "Already signed up? " ]
