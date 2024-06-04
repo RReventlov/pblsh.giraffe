@@ -84,27 +84,19 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
         task {
             let mutable view = Views.errorWithRedirect("account/signup")
             let userManager = ctx.GetService<UserManager<IdentityUser>>()
-            let passwordValidator = PasswordValidator<IdentityUser>()
-            let passwordValidationResult = passwordValidator.ValidateAsync(userManager,null,uncheckedSignUpInfo.Password).Result
-            let passwordErrors = passwordValidationResult.Errors |> Seq.cast<IdentityError> |> List.ofSeq |> List.map (_.Description)
-            let checkForUsername = Users.getUserIdByName(uncheckedSignUpInfo.UserName).Result
-            if passwordValidationResult.Succeeded && Guid.Empty.Equals checkForUsername then
+            
                 
-                let user =
-                    IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
+            let user =
+                IdentityUser(Email = uncheckedSignUpInfo.Email, UserName = uncheckedSignUpInfo.UserName)
 
-                let! result = userManager.CreateAsync(user, uncheckedSignUpInfo.Password)
+            let! result = userManager.CreateAsync(user, uncheckedSignUpInfo.Password)
 
-                view <-
-                    if result.Succeeded then
-                        Views.signUpComplete ()
-                    else
-                        (Views.errorWithRedirect "/account/signup")
+            view <-
+                if result.Succeeded then
+                    Views.signUpComplete()
+                else
+                    Views.signup(result.Errors |> Seq.cast<IdentityError> |> Seq.map(_.Description) |> List.ofSeq)
                     
-            else if Guid.Empty <> checkForUsername then
-                view <- Views.signup(["Duplicate Username"]@passwordErrors)
-            else    
-                view <- Views.signup(passwordErrors)
                
             return! (htmlView view) next ctx
         }

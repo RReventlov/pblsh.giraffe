@@ -67,6 +67,7 @@ let signUpComplete () =
     [ div
           [ _class "main-content" ]
           [ h1 [] [ encodedText "Thanks for signing up!" ]
+            a [_href "/account/login"] [encodedText "Zum Login"]
             // div [] [ encodedText "We send you an email to confirm. Please enter the code below:" ]
             ] ]
     |> dialog "pblsh.confirm"
