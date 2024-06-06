@@ -15,7 +15,7 @@ let index (userInfo: UserInfo option) (posts: PostInformation list) =
       main [] [ div [] (posts |> List.map postCard) ] ]
     |> titledLayoutCss [ "index.css" ] "pblsh"
 
-let login (redirectAfterLogin: RedirectInfo option) =
+let login (redirectAfterLogin: RedirectInfo option) (errors: string list) =
     let actionUrl =
         match redirectAfterLogin with
         | Some r -> Urls.loginWithRedirect r.ReturnUrl
@@ -28,7 +28,10 @@ let login (redirectAfterLogin: RedirectInfo option) =
             input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]
             label [ _for "password" ] [ encodedText "Password" ]
             input [ _id "password"; _type "password"; _name "password"; _placeholder "Password" ]
-            input [ _type "submit"; _value "Log in"; _class "filled-action" ] ]
+            input [ _type "submit"; _value "Log in"; _class "filled-action" ]
+            for e in errors do
+                div [ _class "error"] [encodedText e]
+            ]
       div
           []
           [ span [] [ encodedText "Don't have an account? " ]
@@ -47,7 +50,7 @@ let signup (errors:string List) =
             input [ _id "username"; _type "text"; _name "username"; _placeholder "Username" ]
             input [ _type "submit"; _value "Sign up"; _class "filled-action" ]
             for e in errors do
-                p [_class "Error"] [encodedText e]
+                div [_class "error"] [encodedText e]
           ]
       div
           []

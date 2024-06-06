@@ -62,7 +62,7 @@ input[type="submit"] {
     background: hsl(0, 0%, 95%);
 }
 
-.Error {
+.error {
     color: var(--warned-color)
 }
 

@@ -57,7 +57,7 @@ let getLogin () : HttpHandler =
     fun next ctx ->
         let redirectAfterLogin = ctx.TryBindQueryString<RedirectInfo>() |> Result.toOption
 
-        let view = Views.login redirectAfterLogin
+        let view = Views.login redirectAfterLogin []
         htmlView view next ctx
 
 let postLogin (loginInfo: LoginInfo) : HttpHandler =
@@ -72,7 +72,7 @@ let postLogin (loginInfo: LoginInfo) : HttpHandler =
                     | Ok r -> redirectTo true r.ReturnUrl next ctx
                     | Error _ -> redirectTo true "/account/me" next ctx
             else
-                return! text "An error occurred during login" next ctx
+                return! (htmlView (Views.login None ["Username/Password are wrong"])) next ctx
         }
 
 let getSignup () =
