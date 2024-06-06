@@ -95,7 +95,7 @@ let postSignup (uncheckedSignUpInfo: UncheckedSignUpInfo) : HttpHandler =
                 if result.Succeeded then
                     Views.signUpComplete()
                 else
-                    Views.signup(result.Errors |> Seq.cast<IdentityError> |> Seq.map(_.Description) |> List.ofSeq)
+                    Views.signup(result.Errors |> Seq.cast<IdentityError> |> Seq.map(fun e -> e.Description) |> List.ofSeq)
                     
                
             return! (htmlView view) next ctx
