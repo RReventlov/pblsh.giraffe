@@ -19,3 +19,7 @@
 | ---- | --------------- | -------------- |
 | Jan Hachmann | 4727593 | RReventlov |
 | Lars Richter | 3026191 | LarsRichter04 |
+
+## Docker
+Ein Dockerfile ist vorhanden, damit kann ein Docker-Container erzeugt 
+werden der das Programm ausführt.
